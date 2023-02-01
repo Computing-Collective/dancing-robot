@@ -32,9 +32,9 @@ class Robot:
         if self.move_count == 1:
             self._wobble()
         elif self.move_count == 2:
-            self._move2()
+            self._inward_push()
         elif self.move_count == 3:
-            self._move3()
+            self.sideways_slide()
         elif self.move_count == 4:
             self._move4()
         elif self.move_count == 5:
@@ -45,15 +45,14 @@ class Robot:
 
     def _wobble(self):
         '''
-        Every 30 ticks (0.5 seconds), we do a move
-        So change position a REFRESH_RATE/2 and REFRESH_RATE
+        total position = 2
+        change position every 0.5 seconds
+        total cycles = 5
         '''
         if self.ticks % (REFRESH_RATE / 2) == 0 and self.ticks % REFRESH_RATE != 0:
-            self._set_left_lower_angle(5)
-            self._set_right_lower_angle(5)
+            self._set_lower_angles(5, 5)
         elif self.ticks % REFRESH_RATE == 0:
-            self._set_left_lower_angle(170)
-            self._set_right_lower_angle(165)
+            self._set_lower_angles(170, 170)
 
         # Finish after 5 cycles
         if self.ticks != 0 and self.ticks % (REFRESH_RATE * 5) == 0:
@@ -61,56 +60,95 @@ class Robot:
             self.ticks = 0
             self.move_count += 1
 
-    def _move2(self):
-        self.move_count += 1
-        return
+    def _inward_push(self):
+        '''
+        total position = 2
+        change position every 0.5 seconds
+        total cycles = 5
+        '''
+        if self.ticks % (REFRESH_RATE / 2) == 0 and self.ticks % REFRESH_RATE != 0:
+            self._set_lower_angles(5, 170)
+        elif self.ticks % REFRESH_RATE == 0:
+            self._set_lower_angles(170, 5)
 
-    def _move3(self):
-        self.move_count += 1
-        return
+        # Finish after 5 cycles
+        if self.ticks != 0 and self.ticks % (REFRESH_RATE * 5) == 0:
+            self.reset()
+            self.ticks = 0
+            self.move_count += 1
+
+    def sideways_slide(self):
+        '''
+        total position = 2
+        change position every 0.5 seconds
+        total cycles = 5
+        '''
+        if self.ticks % (REFRESH_RATE / 2) == 0 and self.ticks % REFRESH_RATE != 0:
+            self._set_upper_angles(5, 5)
+        elif self.ticks % REFRESH_RATE == 0:
+            self._set_upper_angles(170, 170)
+
+        # Finish after 5 cycles
+        if self.ticks != 0 and self.ticks % (REFRESH_RATE * 5) == 0:
+            self.reset()
+            self.ticks = 0
+            self.move_count += 1
 
     def _move4(self):
         self.move_count += 1
-        return
 
     def _move5(self):
         self.move_count += 1
-        return
 
     def _move6(self):
         self.move_count += 1
-        return
 
-    # Servo range is from 5 to 170
+    # Servo range is from 5 to 170 for lower servos
     # Servos are individually tuned
 
-    def _set_right_lower_angle(self, angle: int):
+    def _set_lower_angles(self, angle_left: int, angle_right: int):
         """
-        Set the lower right foot angle
+        Set the lower foot angles
 
-        @param angle: The angle to set the lower left foot servo to
+        @param angle_left: The angle to set the lower left foot servo to
+        @param angle_right: The angle to set the lower right foot servo to
         """
-        angle -= 15
-        if angle < 5:
-            angle = 5
-        if angle > 170:
-            angle = 170
-        self.servo_right_lower_foot.angle = angle
+        angle_left -= 10
+        if angle_left < 5:
+            angle_left = 5
+        if angle_left > 170:
+            angle_left = 170
+        self.servo_left_lower_foot.angle = angle_left
 
-    def _set_left_lower_angle(self, angle: int):
-        """
-        Set the lower left foot angle
+        angle_right -= 15
+        if angle_right < 5:
+            angle_right = 5
+        if angle_right > 170:
+            angle_right = 170
+        self.servo_right_lower_foot.angle = angle_right
 
-        @param angle: The angle to set the lower left foot servo to
+    def _set_upper_angles(self, angle_left: int, angle_right: int):
         """
-        angle -= 10
-        if angle < 5:
-            angle = 5
-        if angle > 170:
-            angle = 170
-        self.servo_left_lower_foot.angle = angle
+        Set the upper foot angles
+
+        @param angle_left: The angle to set the upper left foot servo to
+        @param angle_right: The angle to set the upper right foot servo to
+        """
+        angle_left -= 20
+        if angle_left < 0:
+            angle_left = 0
+        if angle_left > 180:
+            angle_left = 180
+        self.servo_left_upper_foot.angle = angle_left
+
+        angle_right -= 5
+        if angle_right < 0:
+            angle_right = 0
+        if angle_right > 180:
+            angle_right = 180
+        self.servo_right_upper_foot.angle = angle_right
 
     def reset(self):
         """Reset the robot to the starting position"""
-        self._set_right_lower_angle(90)
-        self._set_left_lower_angle(90)
+        self._set_lower_angles(90, 90)
+        self._set_upper_angles(90, 90)

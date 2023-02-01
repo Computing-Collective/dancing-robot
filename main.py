@@ -5,8 +5,8 @@
 # Hardware setup:
 #   Servo left foot lower on GP2
 #   Servo right foot lower on GP3
-#   Servo left foot upper on GP4
-#   Servo right foot upper on GP5
+#   Servo left foot upper on GP13
+#   Servo right foot upper on GP12
 
 import time
 import board
@@ -39,12 +39,12 @@ def main():
         pwm_lower_left_foot, actuation_range=180, min_pulse=1000, max_pulse=2000)
 
     pwm_upper_right_foot = pwmio.PWMOut(
-        board.GP5, duty_cycle=DUTY_CYCLE, frequency=50)
+        board.GP12, duty_cycle=DUTY_CYCLE, frequency=50)
     servo_upper_right_foot = servo.Servo(
         pwm_upper_right_foot, actuation_range=180, min_pulse=1000, max_pulse=2000)
 
     pwm_upper_left_foot = pwmio.PWMOut(
-        board.GP4, duty_cycle=DUTY_CYCLE, frequency=50)
+        board.GP13, duty_cycle=DUTY_CYCLE, frequency=50)
     servo_upper_left_foot = servo.Servo(
         pwm_upper_left_foot, actuation_range=180, min_pulse=1000, max_pulse=2000)
 
