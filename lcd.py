@@ -16,6 +16,7 @@ import terminalio # https://docs.circuitpython.org/en/latest/shared-bindings/ter
 
 from adafruit_st7789 import ST7789 # https://docs.circuitpython.org/projects/st7789/en/latest/
 from adafruit_display_text import label # https://docs.circuitpython.org/projects/display_text/en/latest/api.html#adafruit_display_text.bitmap_label.Label
+import vectorio
 
 '''
 
@@ -81,8 +82,25 @@ def displayIntro():
 def displayAsciiFace():
     pass
 
+
 def displayColorFace():
-    pass
+    palette = displayio.Palette(1)
+    palette[0] = WHITE
+    palette[1] = BLACK
+    left_eye = vectorio.Circle(pixel_shader=palette, radius = 20, x = display.width // 3, y = display.height // 3)
+    left_pupil = vectorio.Circle(pixel_shader=palette, radius = 10, x = display.width // 3, y = display.height // 3, color_index=1)
+    # nose = vectorio.Polygon(pixel_shader=palette, points=[])
+    right_eye = vectorio.Circle(pixel_shader=palette, radius = 20, x = 2 * display.width // 3, y = display.height // 3)
+    right_pupil = vectorio.Circle(pixel_shader=palette, radius = 10, x = 2 * display.width // 3, y = display.height // 3, color_index=1)
+    mouth = vectorio.Rectangle(pixel_shader=palette, width = display.width // 2, height = display.height // 7, x = display.width // 4, y = display.height // 4 * 3 )
+    splash.append(left_eye)
+    splash.append(left_pupil)
+    splash.append(right_eye)
+    splash.append(right_pupil)
+    splash.append(mouth)
+    time.sleep(1)
+    
+
 
 def displayRainbowStream():
     color_palette = displayio.Palette(7)
@@ -102,6 +120,61 @@ def displayRainbowStream():
 
     # shift container values over to the right
 
+
+def displayRainbowStreamManual():
+    color_palette = displayio.Palette(7)
+    color_list =  [RED, ORANGE, YELLOW, GREEN, BLUE, INDIGO, VIOLET]
+    
+    global setup_rainbow
+    global rainbow
+    if setup_rainbow == False:
+        rainbow = [] # list of displayio.Bitmap
+        for i in range(len(color_list)):
+            color_palette[i] = color_list[i]
+    
+        for i in range(7): # colors_list.len
+            bmp_name = "temp_bmp_" + str(i)
+            sprite_name = "temp_sprite_" + str(i)
+            bmp_name = displayio.Bitmap(display.width // 7, display.height, 7)
+            bmp_name.fill(i)
+            sprite_name = displayio.TileGrid(bmp_name, pixel_shader=color_palette, tile_width=display.width // 7, tile_height=display.height, x=i*(display.width // 7), y=0)
+            rainbow.append(bmp_name)
+            splash.append(sprite_name)
+        setup_rainbow = True
+
+    for offset in range(7): # colors_list.len
+        for element in range(len(rainbow)):
+            rainbow[element].fill((element + offset) % 7)
+        time.sleep(1/60 * 2)
+        
+
+    # # make the rainbow shift over
+    # for shift in range(100):
+    #     # make 7 coloured rectangles and add to group with x offset
+    #     rainbow = displayio.Group(scale=1, x=0, y=0)
+    #     for i in range(len(color_list)):
+    #         temp_bmp = displayio.Bitmap(display.width // 7, display.height, 7)
+    #         # Start filling in the colours left to right from a shifted index in color_list
+    #         temp_bmp.fill((i + shift) % 7)
+    #         temp_sprite = displayio.TileGrid(temp_bmp, pixel_shader=color_palette, tile_width=display.width // 7, tile_height=display.height, x=i*(display.width // 7), y=0)
+    #         rainbow.append(temp_sprite)
+    #     splash.append(rainbow)
+    #     time.sleep(0.00001)
+    #     # how does this work???
+    #     splash.remove(rainbow)
+
+def displayColorBlocks():
+    # Draw a smaller inner rectangle
+    inner_bitmap = displayio.Bitmap(
+        display.width - BORDER * 2, display.height - BORDER * 2, 1
+    )
+    inner_palette = displayio.Palette(1)
+    inner_palette[0] = RED
+    inner_sprite = displayio.TileGrid(
+        inner_bitmap, pixel_shader=inner_palette, x=BORDER, y=BORDER
+    )
+    splash.append(inner_sprite)
+    
 '''
 @brief: display a coloured string of text at an (x,y) location on the display
 @param str: the string to print
@@ -159,11 +232,12 @@ display.show(splash)
 color_bitmap = displayio.Bitmap(display.width, display.height, 1)
 
 color_pal = displayio.Palette(1)
-color_pal[0] = WHITE
+color_pal[0] = BLACK
 
 bg_sprite = displayio.TileGrid(color_bitmap, pixel_shader=color_pal, x=0, y=0)
 splash.append(bg_sprite)
 
+setup_rainbow = False
 
 '''
 Superloop
@@ -177,4 +251,6 @@ while True:
 
     #displayDoge()
 
-    displayRainbowStream()
+    # displayRainbowStreamManual()
+
+    displayColorFace()
