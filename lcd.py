@@ -4,17 +4,17 @@
 # https://learn.adafruit.com/making-a-pyportal-user-interface-displayio/groups
 
 import board
-import displayio
+import displayio # https://docs.circuitpython.org/en/latest/shared-bindings/displayio/index.html
 
 import busio
 
 import digitalio
 import time
 
-import terminalio
+import terminalio # https://docs.circuitpython.org/en/latest/shared-bindings/terminalio/index.html
 
-from adafruit_st7789 import ST7789
-from adafruit_display_text import label
+from adafruit_st7789 import ST7789 # https://docs.circuitpython.org/projects/st7789/en/latest/
+from adafruit_display_text import label # https://docs.circuitpython.org/projects/display_text/en/latest/api.html#adafruit_display_text.bitmap_label.Label
 
 # First set some parameters used for shapes and text
 BORDER = 20
@@ -23,8 +23,21 @@ BACKGROUND_COLOR = 0x00FF00  # Bright Green
 FOREGROUND_COLOR = 0xAA0088  # Purple
 TEXT_COLOR = 0xFFFF00
 
+Black = 0x000000
+White = 0xFFFFFF
+Red = 0xFF0000
+Green = 0x00FF00
+Blue = 0x0000FF
+Yellow = 0xFFFF00
+Cyan = 0x00FFFF
+Magenta = 0xFF00FF
 
 
+'''
+
+Initialization of SPI for display
+
+'''
 # Release any resources currently in use for the displays
 displayio.release_displays()
 
@@ -43,10 +56,14 @@ while not spi.try_lock():
 spi.configure(baudrate=24000000) # Configure SPI for 24MHz
 spi.unlock()
 
-
-
 display_bus = displayio.FourWire(spi, command=tft_dc, chip_select=tft_cs, reset=tft_res)
 
+
+'''
+
+Initialization of display
+
+'''
 display = ST7789(
     display_bus, rotation=270, width=240, height=135, rowstart=40, colstart=53
 )
@@ -135,10 +152,10 @@ splash.append(text_group4)
 text_list = [":)", "hello", "bye"]
 
 while True:
-    
 
-    
-    # Output refreshing text    
+
+
+    # Output refreshing text
     text = "0 _ 0"
     text_area = label.Label(terminalio.FONT, text=text, color=TEXT_COLOR)
     text_width = text_area.bounding_box[2] * FONTSCALE
@@ -151,7 +168,7 @@ while True:
     splash.append(text_group)
     time.sleep(0.5)
     splash.remove(text_group)
-    
+
     text = ":)"
     text_area = label.Label(terminalio.FONT, text=text, color=TEXT_COLOR)
     text_width = text_area.bounding_box[2] * FONTSCALE
@@ -164,4 +181,4 @@ while True:
     splash.append(text_group)
     time.sleep(0.5)
     splash.pop()
-    
+
