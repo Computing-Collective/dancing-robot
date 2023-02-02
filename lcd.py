@@ -48,104 +48,139 @@ FONT_SCALE_EXTRA_LARGE = 8 # Full screen height
 
 # Example temp function for displaying basics
 def testDisplay():
+    clearDisplay()
     displayText("o__0", BLACK, display.width // 2, display.height // 2)
     time.sleep(0.5)
+
     clearDisplay()
-    
     displayText(":)", BLACK, display.width // 2, display.height // 2)  
     time.sleep(0.5)
-    clearDisplay()
 
 def clearDisplay():
     while (len(splash) > 1):
         splash.pop()
 
 def displayDoge():
+    clearDisplay()
     odb = displayio.OnDiskBitmap('/doge.bmp')
     face = displayio.TileGrid(odb, pixel_shader=odb.pixel_shader)
     splash.append(face)
     time.sleep(0.5)
-    clearDisplay()
 
 # Display 
 # "Hello my"
 # "Name is"      ---->    "DIVY"
 def displayIntro():
+
+    clearDisplay()
     displayText("Hi, my", BLACK, display.width // 2, display.height // 3, FONT_SCALE_LARGE)
     displayText("name is", BLACK, display.width // 2, 2 * display.height // 3, FONT_SCALE_LARGE)
     time.sleep(1)
+    
     clearDisplay()
     displayText("DIVY", BLACK, display.width // 2, display.height // 2, FONT_SCALE_EXTRA_LARGE)
     time.sleep(1)
-    clearDisplay()
 
 def displayAsciiFace():
-    pass
-
+    clearDisplay()
+    displayText("[||] [||]", BLACK, display.width // 2, display.height // 3, FONT_SCALE_LARGE)
+    displayText("____", BLACK, display.width // 2, 2 * display.height // 3, FONT_SCALE_LARGE)
+    time.sleep(0.5)
+    
+    clearDisplay()
+    displayText("[X] [X]", BLACK, display.width // 2, display.height // 3, FONT_SCALE_LARGE)
+    displayText("O", BLACK, display.width // 2, 2 * display.height // 3, FONT_SCALE_LARGE)
+    time.sleep(0.5)
 
 def displayColorFace():
-    palette = displayio.Palette(1)
+    clearDisplay()
+
+    palette = displayio.Palette(3)
     palette[0] = WHITE
     palette[1] = BLACK
+    palette[2] = RED
+    
     left_eye = vectorio.Circle(pixel_shader=palette, radius = 20, x = display.width // 3, y = display.height // 3)
     left_pupil = vectorio.Circle(pixel_shader=palette, radius = 10, x = display.width // 3, y = display.height // 3, color_index=1)
-    # nose = vectorio.Polygon(pixel_shader=palette, points=[])
+
+    # points for a triangle (nose)
+    points = [
+        (120, 65), # top middle
+        (110, 75), # left bottom
+        (130, 75) # left right
+        ]
+    nose = vectorio.Polygon(pixel_shader=palette, points=points, x = 0, y = 0, color_index = 2)
+    
     right_eye = vectorio.Circle(pixel_shader=palette, radius = 20, x = 2 * display.width // 3, y = display.height // 3)
     right_pupil = vectorio.Circle(pixel_shader=palette, radius = 10, x = 2 * display.width // 3, y = display.height // 3, color_index=1)
     mouth = vectorio.Rectangle(pixel_shader=palette, width = display.width // 2, height = display.height // 7, x = display.width // 4, y = display.height // 4 * 3 )
+
     splash.append(left_eye)
     splash.append(left_pupil)
     splash.append(right_eye)
     splash.append(right_pupil)
     splash.append(mouth)
+    splash.append(nose)
+    
     time.sleep(1)
     
-
-
-def displayRainbowStream():
-    color_palette = displayio.Palette(7)
-    color_list =  [RED, ORANGE, YELLOW, GREEN, BLUE, INDIGO, VIOLET]
-    for i in range(len(color_list)):
-        color_palette[i] = color_list[i]
-    
-    color_bitmap2 = displayio.Bitmap((display.width // 7) * 7, display.height, 1)
-    tile_grid = displayio.TileGrid(bitmap = color_bitmap2, pixel_shader = color_palette, tile_width=display.width // 7)
-    
-    
-    splash.append(tile_grid)
-    time.sleep(5)
+def displayArrows():
     clearDisplay()
 
-    # divide screen into 7 containers
+    palette = displayio.Palette(3)
+    palette[0] = CYAN
+    palette[1] = MAGENTA
+    palette[2] = ORANGE
 
-    # shift container values over to the right
+    # points for a triangle (nose)
+    points = [
+        (140, 30), # top 
+        (220, (105+30)//2), # right
+        (140, 105) # bottom
+        ]
+    right_triangle = vectorio.Polygon(pixel_shader=palette, points=points, x = 0, y = 0, color_index = 2)
+    right_rect = vectorio.Rectangle(pixel_shader=palette, width = display.width // 2, height = display.height // 4, x = 20, y = (display.height // 2) - (display.height // 4) // 2 )
+    splash.append(right_rect)
+    splash.append(right_triangle)
+    time.sleep(0.7)
 
+    clearDisplay()
+    # points for a triangle (nose)
+    points = [
+        (100, 30), # top 
+        (20, (105+30)//2), # right
+        (100, 105) # bottom
+        ]
+    left_triangle = vectorio.Polygon(pixel_shader=palette, points=points, x = 0, y = 0, color_index = 2)
+    left_rect = vectorio.Rectangle(pixel_shader=palette, width = display.width // 2, height = display.height // 4, x = 100, y = (display.height // 2) - (display.height // 4) // 2 )
+    splash.append(left_rect)
+    splash.append(left_triangle)
+    time.sleep(0.7)
 
 def displayRainbowStreamManual():
     color_palette = displayio.Palette(7)
     color_list =  [RED, ORANGE, YELLOW, GREEN, BLUE, INDIGO, VIOLET]
     
-    global setup_rainbow
-    global rainbow
-    if setup_rainbow == False:
-        rainbow = [] # list of displayio.Bitmap
-        for i in range(len(color_list)):
-            color_palette[i] = color_list[i]
-    
-        for i in range(7): # colors_list.len
-            bmp_name = "temp_bmp_" + str(i)
-            sprite_name = "temp_sprite_" + str(i)
-            bmp_name = displayio.Bitmap(display.width // 7, display.height, 7)
-            bmp_name.fill(i)
-            sprite_name = displayio.TileGrid(bmp_name, pixel_shader=color_palette, tile_width=display.width // 7, tile_height=display.height, x=i*(display.width // 7), y=0)
-            rainbow.append(bmp_name)
-            splash.append(sprite_name)
-        setup_rainbow = True
+    rainbow = [] # list of displayio.Bitmap
+    for i in range(len(color_list)):
+        color_palette[i] = color_list[i]
 
-    for offset in range(7): # colors_list.len
-        for element in range(len(rainbow)):
-            rainbow[element].fill((element + offset) % 7)
-        time.sleep(1/60 * 2)
+    for i in range(7): # colors_list.len
+        bmp_name = "temp_bmp_" + str(i)
+        sprite_name = "temp_sprite_" + str(i)
+        bmp_name = displayio.Bitmap(display.width // 7, display.height, 7)
+        bmp_name.fill(i)
+        sprite_name = displayio.TileGrid(bmp_name, pixel_shader=color_palette, tile_width=display.width // 7, tile_height=display.height, x=i*(display.width // 7), y=0)
+        rainbow.append(bmp_name)
+        splash.append(sprite_name)
+
+    for i in range(3):
+        for offset in range(7): # colors_list.len
+            for element in range(len(rainbow)):
+                rainbow[element].fill((element + offset) % 7)
+            time.sleep(0.05)
+
+    clearDisplay()
         
 
     # # make the rainbow shift over
@@ -229,15 +264,15 @@ Initialization the background (global)
 splash = displayio.Group()
 display.show(splash)
 
-color_bitmap = displayio.Bitmap(display.width, display.height, 1)
+color_bitmap = displayio.Bitmap(display.width, display.height, 2)
 
-color_pal = displayio.Palette(1)
+color_pal = displayio.Palette(2)
 color_pal[0] = BLACK
+color_pal[1] = WHITE
 
 bg_sprite = displayio.TileGrid(color_bitmap, pixel_shader=color_pal, x=0, y=0)
 splash.append(bg_sprite)
 
-setup_rainbow = False
 
 '''
 Superloop
@@ -245,12 +280,16 @@ Superloop
 while True:
     print("Code starting")
     
-    #testDisplay()
+    displayIntro()
 
-    # displayIntro()
+    displayDoge()
 
-    #displayDoge()
+    displayArrows()
 
-    # displayRainbowStreamManual()
-
+    displayRainbowStreamManual()
+    
+    color_bitmap.fill(0) # fill background black
     displayColorFace()
+
+    color_bitmap.fill(1) # fill background white
+    displayAsciiFace()
