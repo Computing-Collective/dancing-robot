@@ -53,6 +53,7 @@ def main():
 
     # Main logic loop
     print("Dancing Robot Started!")
+    robot.reset()
     while True:
         robot.refresh()
         time.sleep(1 / REFRESH_RATE)

@@ -24,19 +24,19 @@ class Robot:
         self.servo_left_upper_foot: servo.Servo = servo_left_upper_foot
         self.ticks = 0  # Timing counter
         self.move_count = 1  # Move counter
+        self.cycles = 0  # Cycle counter for each move
 
     def refresh(self):
         """Increment the robot timing and make it dance accordingly"""
-        print(self.move_count)
-        print(self.ticks)
+        print("Move: ", self.move_count)
         if self.move_count == 1:
             self._wobble()
         elif self.move_count == 2:
             self._inward_push()
         elif self.move_count == 3:
-            self.sideways_slide()
+            self._the_sweep()
         elif self.move_count == 4:
-            self._move4()
+            self._balancing_act()
         elif self.move_count == 5:
             self._move5()
         elif self.move_count == 6:
@@ -49,15 +49,18 @@ class Robot:
         change position every 0.5 seconds
         total cycles = 5
         '''
-        if self.ticks % (REFRESH_RATE / 2) == 0 and self.ticks % REFRESH_RATE != 0:
-            self._set_lower_angles(5, 5)
-        elif self.ticks % REFRESH_RATE == 0:
-            self._set_lower_angles(170, 170)
+        if self.ticks == REFRESH_RATE / 2:
+            self._set_lower_angles(35, 35)
+        elif self.ticks == REFRESH_RATE:
+            self._set_lower_angles(140, 140)
+            self.cycles += 1
+            self.ticks = 0
 
         # Finish after 5 cycles
-        if self.ticks != 0 and self.ticks % (REFRESH_RATE * 5) == 0:
+        if self.cycles == 5:
             self.reset()
             self.ticks = 0
+            self.cycles = 0
             self.move_count += 1
 
     def _inward_push(self):
@@ -66,36 +69,87 @@ class Robot:
         change position every 0.5 seconds
         total cycles = 5
         '''
-        if self.ticks % (REFRESH_RATE / 2) == 0 and self.ticks % REFRESH_RATE != 0:
+        if self.ticks == REFRESH_RATE / 2:
             self._set_lower_angles(5, 170)
-        elif self.ticks % REFRESH_RATE == 0:
-            self._set_lower_angles(170, 5)
+        elif self.ticks == REFRESH_RATE:
+            self._set_lower_angles(90, 90)
+            self.cycles += 1
+            self.ticks = 0
 
         # Finish after 5 cycles
-        if self.ticks != 0 and self.ticks % (REFRESH_RATE * 5) == 0:
+        if self.cycles == 5:
             self.reset()
             self.ticks = 0
+            self.cycles = 0
             self.move_count += 1
 
-    def sideways_slide(self):
+    def _the_sweep(self):
         '''
         total position = 2
         change position every 0.5 seconds
         total cycles = 5
         '''
-        if self.ticks % (REFRESH_RATE / 2) == 0 and self.ticks % REFRESH_RATE != 0:
+        if self.ticks == REFRESH_RATE / 2:
             self._set_upper_angles(5, 5)
-        elif self.ticks % REFRESH_RATE == 0:
+        elif self.ticks == REFRESH_RATE:
             self._set_upper_angles(170, 170)
+            self.cycles += 1
+            self.ticks = 0
 
         # Finish after 5 cycles
-        if self.ticks != 0 and self.ticks % (REFRESH_RATE * 5) == 0:
+        if self.cycles == 5:
             self.reset()
             self.ticks = 0
+            self.cycles = 0
             self.move_count += 1
 
-    def _move4(self):
-        self.move_count += 1
+    def _balancing_act(self):
+        '''
+        total position = 4
+        change position every 0.5 seconds
+        total cycles = 2
+        '''
+        if self.ticks == REFRESH_RATE / 2:
+            # position 1
+            self._set_lower_angles(120, 180)
+        elif self.ticks == REFRESH_RATE:
+            # position 2
+            self._set_lower_angles(180, 180)
+        elif self.ticks == REFRESH_RATE * 3 / 2:
+            # position 3
+            self._set_lower_angles(180, 0)
+            self._set_upper_angles(90, 0)
+        elif self.ticks == REFRESH_RATE * 2:
+            # position 4
+            self._set_lower_angles(180, 180)
+            self._set_upper_angles(90, 180)
+        elif self.ticks == REFRESH_RATE * 5 / 2:
+            # position 5
+            self.reset()
+
+        elif self.ticks == REFRESH_RATE * 3:
+            # position 6
+            self._set_lower_angles(0, 90)
+        elif self.ticks == REFRESH_RATE * 7 / 2:
+            # position 7
+            self._set_lower_angles(0, 0)
+        elif self.ticks == REFRESH_RATE * 4:
+            # position 8
+            self._set_lower_angles(180, 0)
+            self._set_upper_angles(0, 90)
+        elif self.ticks == REFRESH_RATE * 9 / 2:
+            self._set_lower_angles(0, 0)
+            self._set_upper_angles(180, 90)
+        elif self.ticks == REFRESH_RATE * 5:
+            self.reset()
+            self.ticks = 0
+            self.cycles += 1
+
+        if self.cycles == 2:
+            self.reset()
+            self.ticks = 0
+            self.cycles = 0
+            self.move_count += 1
 
     def _move5(self):
         self.move_count += 1
@@ -111,7 +165,9 @@ class Robot:
         Set the lower foot angles
 
         @param angle_left: The angle to set the lower left foot servo to
+                           0 is inwards, 180 is outwards
         @param angle_right: The angle to set the lower right foot servo to
+                            0 is outwards, 180 is inwards
         """
         angle_left -= 10
         if angle_left < 5:
@@ -132,7 +188,9 @@ class Robot:
         Set the upper foot angles
 
         @param angle_left: The angle to set the upper left foot servo to
+                           0 is outwards, 180 is inwards
         @param angle_right: The angle to set the upper right foot servo to
+                            0 is inwards, 180 is outwards
         """
         angle_left -= 20
         if angle_left < 0:
