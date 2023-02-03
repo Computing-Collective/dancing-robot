@@ -105,36 +105,30 @@ class Robot:
 
     def _balancing_act(self):
         '''
-        total position = 4
+        total position = 8
         change position every 0.5 seconds
         total cycles = 2
         '''
+        # balance on left foot
         if self.ticks == REFRESH_RATE / 2:
-            # position 1
             self._set_lower_angles(120, 180)
         elif self.ticks == REFRESH_RATE:
-            # position 2
             self._set_lower_angles(180, 180)
         elif self.ticks == REFRESH_RATE * 3 / 2:
-            # position 3
             self._set_lower_angles(180, 0)
             self._set_upper_angles(90, 0)
         elif self.ticks == REFRESH_RATE * 2:
-            # position 4
             self._set_lower_angles(180, 180)
             self._set_upper_angles(90, 180)
         elif self.ticks == REFRESH_RATE * 5 / 2:
-            # position 5
             self.reset()
 
+        # balance on right foot
         elif self.ticks == REFRESH_RATE * 3:
-            # position 6
             self._set_lower_angles(0, 90)
         elif self.ticks == REFRESH_RATE * 7 / 2:
-            # position 7
             self._set_lower_angles(0, 0)
         elif self.ticks == REFRESH_RATE * 4:
-            # position 8
             self._set_lower_angles(180, 0)
             self._set_upper_angles(0, 90)
         elif self.ticks == REFRESH_RATE * 9 / 2:
@@ -145,14 +139,33 @@ class Robot:
             self.ticks = 0
             self.cycles += 1
 
+        # Finish after 2 cycles
         if self.cycles == 2:
             self.reset()
             self.ticks = 0
             self.cycles = 0
             self.move_count += 1
 
-    def _move5(self):
-        self.move_count += 1
+    def _walk(self):
+        '''
+        Lift left foot, move it forward, then lower it
+        Lift right foot, move it forward, then lower it
+        total position = 6
+        total cycles = 2
+        '''
+        if self.ticks == REFRESH_RATE / 2:
+            self._set_lower_angles(90, 180)
+            self._set_upper_angles(90, 0)
+        elif self.ticks == REFRESH_RATE:
+            self.reset()
+            self.ticks = 0
+            self.cycles += 1
+        
+        if self.cycles == 2:
+            self.reset()
+            self.ticks = 0
+            self.cycles = 0
+            self.move_count += 1
 
     def _move6(self):
         self.move_count += 1

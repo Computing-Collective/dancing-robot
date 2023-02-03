@@ -3,10 +3,10 @@
 
 # Project 1: Dancing Robot
 # Hardware setup:
-#   Servo left foot lower on GP2
-#   Servo right foot lower on GP3
-#   Servo left foot upper on GP13
-#   Servo right foot upper on GP12
+#   Servo left foot lower on GP19
+#   Servo right foot lower on GP20
+#   Servo left foot upper on GP18
+#   Servo right foot upper on GP21
 
 import time
 import board
@@ -29,22 +29,22 @@ def main():
     # Servo setup
     # Note: Tune pulse for specific servos
     pwm_lower_right_foot = pwmio.PWMOut(
-        board.GP3, duty_cycle=DUTY_CYCLE, frequency=50)
+        board.GP20, duty_cycle=DUTY_CYCLE, frequency=50)
     servo_lower_right_foot = servo.Servo(
         pwm_lower_right_foot, actuation_range=180, min_pulse=1000, max_pulse=2000)
 
     pwm_lower_left_foot = pwmio.PWMOut(
-        board.GP2, duty_cycle=DUTY_CYCLE, frequency=50)
+        board.GP19, duty_cycle=DUTY_CYCLE, frequency=50)
     servo_lower_left_foot = servo.Servo(
         pwm_lower_left_foot, actuation_range=180, min_pulse=1000, max_pulse=2000)
 
     pwm_upper_right_foot = pwmio.PWMOut(
-        board.GP12, duty_cycle=DUTY_CYCLE, frequency=50)
+        board.GP21, duty_cycle=DUTY_CYCLE, frequency=50)
     servo_upper_right_foot = servo.Servo(
         pwm_upper_right_foot, actuation_range=180, min_pulse=1000, max_pulse=2000)
 
     pwm_upper_left_foot = pwmio.PWMOut(
-        board.GP13, duty_cycle=DUTY_CYCLE, frequency=50)
+        board.GP18, duty_cycle=DUTY_CYCLE, frequency=50)
     servo_upper_left_foot = servo.Servo(
         pwm_upper_left_foot, actuation_range=180, min_pulse=1000, max_pulse=2000)
 
