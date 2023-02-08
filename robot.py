@@ -2,6 +2,8 @@ from adafruit_motor import servo
 
 from constants import *
 
+from lcd import *
+
 
 class Robot:
     """
@@ -16,7 +18,14 @@ class Robot:
     @param servo_left_upper_foot: The servo for the upper left foot
     """
 
-    def __init__(self, servo_right_lower_foot, servo_left_lower_foot, servo_right_upper_foot, servo_left_upper_foot):
+    def __init__(
+        self,
+        servo_right_lower_foot,
+        servo_left_lower_foot,
+        servo_right_upper_foot,
+        servo_left_upper_foot,
+        LCD,
+    ):
         """Initialize the robot"""
         self.servo_right_lower_foot: servo.Servo = servo_right_lower_foot
         self.servo_left_lower_foot: servo.Servo = servo_left_lower_foot
@@ -25,30 +34,45 @@ class Robot:
         self.ticks = 0  # Timing counter
         self.move_count = 1  # Move counter
         self.cycles = 0  # Cycle counter for each move
+        self.LCDObj = LCD
+        self.changed_moves = False  # counts when the move changes
 
     def refresh(self):
         """Increment the robot timing and make it dance accordingly"""
-        print("Move: ", self.move_count)
+        # print("Move: ", self.move_count)
+        # self.is_changed_move()  # clears the display if necessary
         if self.move_count == 1:
             self._wobble()
+            # self.LCDObj.displayIntro(self.ticks) # TODO not working
+            # self.LCDObj.displayRainbowStreamManual(self.ticks)
         elif self.move_count == 2:
             self._inward_push()
+            # print(self.changed_moves)
+            self.LCDObj.displayDoge(self.ticks)
+            # if self.changed_moves == True:
+            #     print("3")
+            #     self.LCDObj.clearDisplay()
+            #     self.changed_moves = False
+            #     self.LCDObj.displayDoge(self.ticks)
         elif self.move_count == 3:
             self._the_sweep()
         elif self.move_count == 4:
             self._balancing_act()
+            self.LCDObj.displayRobotFaces(self.ticks)  # TODO ticks
         elif self.move_count == 5:
-            self._walk_backwards()
+            pass
+            self.LCDObj.displayArrows(self.ticks)
         elif self.move_count == 6:
-            self._move6()
+            pass
+            self.displayRainbowStreamManual()
         self.ticks += 1
 
     def _wobble(self):
-        '''
+        """
         total position = 2
         change position every 0.5 seconds
         total cycles = 5
-        '''
+        """
         if self.ticks == REFRESH_RATE / 2:
             self._set_lower_angles(35, 35)
         elif self.ticks == REFRESH_RATE:
@@ -62,13 +86,14 @@ class Robot:
             self.ticks = 0
             self.cycles = 0
             self.move_count += 1
+            self.changed_moves = True
 
     def _inward_push(self):
-        '''
+        """
         total position = 2
         change position every 0.5 seconds
         total cycles = 5
-        '''
+        """
         if self.ticks == REFRESH_RATE / 2:
             self._set_lower_angles(5, 170)
         elif self.ticks == REFRESH_RATE:
@@ -82,13 +107,15 @@ class Robot:
             self.ticks = 0
             self.cycles = 0
             self.move_count += 1
+            self.changed_moves = True
+            print(self.changed_moves)
 
     def _the_sweep(self):
-        '''
+        """
         total position = 2
         change position every 0.5 seconds
         total cycles = 5
-        '''
+        """
         if self.ticks == REFRESH_RATE / 2:
             self._set_upper_angles(5, 5)
         elif self.ticks == REFRESH_RATE:
@@ -104,17 +131,16 @@ class Robot:
             self.move_count += 1
 
     def _balancing_act(self):
-        '''
+        """
         total position = 8
         change position every 0.5 seconds
         total cycles = 2
-        '''
+        """
         # balance on left foot
         if self.ticks == REFRESH_RATE / 2:
             self._set_lower_angles(120, 180)
         elif self.ticks == REFRESH_RATE:
             self._set_lower_angles(180, 180)
-        # move right foot in a fancy way
         elif self.ticks == REFRESH_RATE * 3 / 2:
             self._set_lower_angles(180, 0)
             self._set_upper_angles(90, 0)
@@ -126,12 +152,9 @@ class Robot:
 
         # balance on right foot
         elif self.ticks == REFRESH_RATE * 3:
-            self._set_lower_angles(90, 50)
-        elif self.ticks == REFRESH_RATE * 7 / 2:
-            self._set_lower_angles(0, 50)
+            self._set_lower_angles(0, 90)
         elif self.ticks == REFRESH_RATE * 7 / 2:
             self._set_lower_angles(0, 0)
-        # move left foot in a fancy way
         elif self.ticks == REFRESH_RATE * 4:
             self._set_lower_angles(180, 0)
             self._set_upper_angles(0, 90)
@@ -150,55 +173,22 @@ class Robot:
             self.cycles = 0
             self.move_count += 1
 
-    def _walk_backwards(self):
-        '''
+    def _walk(self):
+        """
         Lift left foot, move it forward, then lower it
         Lift right foot, move it forward, then lower it
         total position = 6
         total cycles = 2
-        '''
-        # get on left foot
-        if self.ticks == REFRESH_RATE / 4:
-            self._set_lower_angles(120, 180)
-        elif self.ticks == REFRESH_RATE / 2:
-            self._set_lower_angles(180, 180)
-        # move right foot forward
-        elif self.ticks == REFRESH_RATE * 3 / 4:
-            self._set_upper_angles(90, 30)
+        """
+        if self.ticks == REFRESH_RATE / 2:
+            self._set_lower_angles(90, 180)
+            self._set_upper_angles(90, 0)
         elif self.ticks == REFRESH_RATE:
-            self._set_upper_angles(30, 90) 
-        # set the right foot down
-        elif self.ticks == REFRESH_RATE * 5 / 4:
-            self._set_lower_angles(140, 140)
-        elif self.ticks == REFRESH_RATE * 3 / 2:
-            self._set_lower_angles(90, 90)
-        elif self.ticks == REFRESH_RATE * 7 / 4:
-            self.reset()
-        
-        # repeat for right foot
-        if self.ticks == REFRESH_RATE * 2:
-            self._set_lower_angles(90, 50)
-        elif self.ticks == REFRESH_RATE * 9 / 4:
-            self._set_lower_angles(0, 50)
-        elif self.ticks == REFRESH_RATE * 5 / 2:
-            self._set_lower_angles(0, 0)
-        # move left foot forward
-        elif self.ticks == REFRESH_RATE * 11 / 4:
-            self._set_upper_angles(40, 90)
-        elif self.ticks == REFRESH_RATE * 3:
-            self._set_upper_angles(90, 140)
-        # set the left foot down
-        elif self.ticks == REFRESH_RATE * 13 / 4:
-            self._set_lower_angles(50, 50)
-        elif self.ticks == REFRESH_RATE * 7 / 2:
-            self._set_lower_angles(90, 90)
-        elif self.ticks == REFRESH_RATE * 15 / 4:
             self.reset()
             self.ticks = 0
             self.cycles += 1
-        
-        # finish after 2 cycles
-        if self.cycles == 5:
+
+        if self.cycles == 2:
             self.reset()
             self.ticks = 0
             self.cycles = 0
@@ -260,3 +250,5 @@ class Robot:
         """Reset the robot to the starting position"""
         self._set_lower_angles(90, 90)
         self._set_upper_angles(90, 90)
+
+    # def is_changed_move(self):
