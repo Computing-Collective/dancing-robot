@@ -38,7 +38,7 @@ class Robot:
         elif self.move_count == 4:
             self._balancing_act()
         elif self.move_count == 5:
-            self._move5()
+            self._walk_backwards()
         elif self.move_count == 6:
             self._move6()
         self.ticks += 1
@@ -114,6 +114,7 @@ class Robot:
             self._set_lower_angles(120, 180)
         elif self.ticks == REFRESH_RATE:
             self._set_lower_angles(180, 180)
+        # move right foot in a fancy way
         elif self.ticks == REFRESH_RATE * 3 / 2:
             self._set_lower_angles(180, 0)
             self._set_upper_angles(90, 0)
@@ -125,9 +126,12 @@ class Robot:
 
         # balance on right foot
         elif self.ticks == REFRESH_RATE * 3:
-            self._set_lower_angles(0, 90)
+            self._set_lower_angles(90, 50)
+        elif self.ticks == REFRESH_RATE * 7 / 2:
+            self._set_lower_angles(0, 50)
         elif self.ticks == REFRESH_RATE * 7 / 2:
             self._set_lower_angles(0, 0)
+        # move left foot in a fancy way
         elif self.ticks == REFRESH_RATE * 4:
             self._set_lower_angles(180, 0)
             self._set_upper_angles(0, 90)
@@ -146,22 +150,55 @@ class Robot:
             self.cycles = 0
             self.move_count += 1
 
-    def _walk(self):
+    def _walk_backwards(self):
         '''
         Lift left foot, move it forward, then lower it
         Lift right foot, move it forward, then lower it
         total position = 6
         total cycles = 2
         '''
-        if self.ticks == REFRESH_RATE / 2:
-            self._set_lower_angles(90, 180)
-            self._set_upper_angles(90, 0)
+        # get on left foot
+        if self.ticks == REFRESH_RATE / 4:
+            self._set_lower_angles(120, 180)
+        elif self.ticks == REFRESH_RATE / 2:
+            self._set_lower_angles(180, 180)
+        # move right foot forward
+        elif self.ticks == REFRESH_RATE * 3 / 4:
+            self._set_upper_angles(90, 30)
         elif self.ticks == REFRESH_RATE:
+            self._set_upper_angles(30, 90) 
+        # set the right foot down
+        elif self.ticks == REFRESH_RATE * 5 / 4:
+            self._set_lower_angles(140, 140)
+        elif self.ticks == REFRESH_RATE * 3 / 2:
+            self._set_lower_angles(90, 90)
+        elif self.ticks == REFRESH_RATE * 7 / 4:
+            self.reset()
+        
+        # repeat for right foot
+        if self.ticks == REFRESH_RATE * 2:
+            self._set_lower_angles(90, 50)
+        elif self.ticks == REFRESH_RATE * 9 / 4:
+            self._set_lower_angles(0, 50)
+        elif self.ticks == REFRESH_RATE * 5 / 2:
+            self._set_lower_angles(0, 0)
+        # move left foot forward
+        elif self.ticks == REFRESH_RATE * 11 / 4:
+            self._set_upper_angles(40, 90)
+        elif self.ticks == REFRESH_RATE * 3:
+            self._set_upper_angles(90, 140)
+        # set the left foot down
+        elif self.ticks == REFRESH_RATE * 13 / 4:
+            self._set_lower_angles(50, 50)
+        elif self.ticks == REFRESH_RATE * 7 / 2:
+            self._set_lower_angles(90, 90)
+        elif self.ticks == REFRESH_RATE * 15 / 4:
             self.reset()
             self.ticks = 0
             self.cycles += 1
         
-        if self.cycles == 2:
+        # finish after 2 cycles
+        if self.cycles == 5:
             self.reset()
             self.ticks = 0
             self.cycles = 0
