@@ -2,6 +2,8 @@ from adafruit_motor import servo
 
 from constants import *
 
+from lcd import *
+
 
 class Robot:
     """
@@ -16,7 +18,14 @@ class Robot:
     @param servo_left_upper_foot: The servo for the upper left foot
     """
 
-    def __init__(self, servo_right_lower_foot, servo_left_lower_foot, servo_right_upper_foot, servo_left_upper_foot):
+    def __init__(
+        self,
+        servo_right_lower_foot,
+        servo_left_lower_foot,
+        servo_right_upper_foot,
+        servo_left_upper_foot,
+        LCD,
+    ):
         """Initialize the robot"""
         self.servo_right_lower_foot: servo.Servo = servo_right_lower_foot
         self.servo_left_lower_foot: servo.Servo = servo_left_lower_foot
@@ -33,25 +42,40 @@ class Robot:
         self.counter = 0  # Counter for changing angles incrementally
         self.move_count = 1  # Move counter
         self.cycles = 0  # Cycle counter for each move
+        self.LCDObj = LCD
+        self.changed_moves = False  # counts when the move changes
 
     def refresh(self):
         """Increment the robot timing and make it dance accordingly"""
-        print("Move: ", self.move_count)
+        # print("Move: ", self.move_count)
+        # self.is_changed_move()  # clears the display if necessary
         if self.move_count == 1:
             self._balancing_act(2)
+            # self.LCDObj.displayIntro(self.ticks) # TODO not working
+            # self.LCDObj.displayRainbowStreamManual(self.ticks)
         elif self.move_count == 2:
             self._swim(3)
+            # print(self.changed_moves)
+            self.LCDObj.displayDoge(self.ticks)
+            # if self.changed_moves == True:
+            #     print("3")
+            #     self.LCDObj.clearDisplay()
+            #     self.changed_moves = False
+            #     self.LCDObj.displayDoge(self.ticks)
         elif self.move_count == 3:
             self._walk_forwards(2)
         elif self.move_count == 4:
             self._the_sweep(3)
+            self.LCDObj.displayRobotFaces(self.ticks)  # TODO ticks
         elif self.move_count == 5:
             self._walk_backwards(2)
+            self.LCDObj.displayArrows(self.ticks)
         elif self.move_count == 6:
             self._circle(5)
+            self.displayRainbowStreamManual()
         self.ticks += 1
         self.counter += 1
-            
+
     def _swim(self, cycles: int):
         speed = self.MEDIUM_MOVE
         if self.ticks < speed:
@@ -79,6 +103,7 @@ class Robot:
             self.cycles = 0
             self.counter = 0
             self.move_count += 1
+            self.changed_moves = True
 
     def _the_sweep(self, cycles: int):
         speed = self.MEDIUM_MOVE
@@ -111,6 +136,8 @@ class Robot:
             self.cycles = 0
             self.counter = 0
             self.move_count += 1
+            self.changed_moves = True
+            print(self.changed_moves)
 
     def _balancing_act(self, cycles: int):
         speed = self.MEDIUM_MOVE
@@ -536,3 +563,5 @@ class Robot:
             self.cycles = 0
             self.counter = 0
             self.move_count += 1
+
+    # def is_changed_move(self):
