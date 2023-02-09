@@ -43,12 +43,12 @@ class Robot:
             self._inward_push()
         elif self.move_count == 3:
             self._the_sweep()
-        # elif self.move_count == 4:
-        #     self._balancing_act()
-        # elif self.move_count == 5:
-        #     self._walk_backwards()
-        # elif self.move_count == 6:
-        #     self._move6()
+        elif self.move_count == 4:
+            self._balancing_act()
+        elif self.move_count == 5:
+            self._walk_backwards()
+        elif self.move_count == 6:
+            self._circle()
         self.ticks += 1
         self.counter += 1
 
@@ -58,7 +58,7 @@ class Robot:
         change position every 0.5 seconds
         total cycles = 5
         '''
-        speed = self.FAST_MOVE
+        speed = self.MEDIUM_MOVE
         if self.ticks < speed:
             # lower angles from 90, 90 to 0, 0
             self._move_to_angles_incrementally(90, 90, 90, 90, 90, 90, 0, 0, self.counter, speed)
@@ -87,6 +87,7 @@ class Robot:
             self.reset()
             self.ticks = 0
             self.cycles = 0
+            self.counter = 0
             self.move_count += 1
 
     def _inward_push(self):
@@ -110,10 +111,11 @@ class Robot:
             self.ticks = 0
 
         # Finish after 5 cycles
-        if self.cycles == 5:
+        if self.cycles == 4:
             self.reset()
             self.ticks = 0
             self.cycles = 0
+            self.counter = 0
             self.move_count += 1
 
     def _the_sweep(self):
@@ -145,59 +147,95 @@ class Robot:
             self.counter = 0
             self.cycles += 1
             self.ticks = 0
-        # if self.ticks == REFRESH_RATE / 2:
-        #     self._set_upper_angles(5, 5)
-        # elif self.ticks == REFRESH_RATE:
-        #     self._set_upper_angles(170, 170)
-        #     self.cycles += 1
-        #     self.ticks = 0
 
         # Finish after 5 cycles
-        if self.cycles == 5:
+        if self.cycles == 4:
             self.reset()
             self.ticks = 0
             self.cycles = 0
+            self.counter = 0
             self.move_count += 1
 
     def _balancing_act(self):
         '''
-        total position = 8
-        change position every 0.5 seconds
+        total position = 22
         total cycles = 2
         '''
+        speed = self.MEDIUM_MOVE
+        
         # balance on left foot
-        if self.ticks == REFRESH_RATE / 2:
-            self._set_lower_angles(120, 180)
-        elif self.ticks == REFRESH_RATE:
-            self._set_lower_angles(180, 180)
-        # move right foot in a fancy way
-        elif self.ticks == REFRESH_RATE * 3 / 2:
-            self._set_lower_angles(180, 0)
-            self._set_upper_angles(90, 0)
-        elif self.ticks == REFRESH_RATE * 2:
-            self._set_lower_angles(180, 180)
-            self._set_upper_angles(90, 180)
-        elif self.ticks == REFRESH_RATE * 5 / 2:
-            self.reset()
+        if self.ticks < speed:
+            self._move_to_angles_incrementally(90, 90, 90, 90, 90, 90, 120, 180, self.counter, speed)
+        elif self.ticks == speed:
+            self.counter = 0
+        elif self.ticks < speed * 2:
+            self._move_to_angles_incrementally(90, 90, 120, 180, 90, 90, 160, 180, self.counter, speed)
+        elif self.ticks == speed * 2:
+            self.counter = 0
 
+        # move right foot in air
+        elif self.ticks < speed * 3:
+            self._move_to_angles_incrementally(90, 90, 160, 180, 90, 0, 160, 0, self.counter, speed)
+        elif self.ticks == speed * 3:
+            self.counter = 0
+        elif self.ticks < speed * 4:
+            self._move_to_angles_incrementally(90, 0, 160, 0, 90, 180, 160, 180, self.counter, speed)
+        elif self.ticks == speed * 4:
+            self.counter = 0
+        elif self.ticks < speed * 5:
+            self._move_to_angles_incrementally(90, 180, 160, 180, 90, 0, 160, 0, self.counter, speed)
+        elif self.ticks == speed * 5:
+            self.counter = 0
+        elif self.ticks < speed * 6:
+            self._move_to_angles_incrementally(90, 0, 160, 0, 90, 180, 160, 180, self.counter, speed)
+        elif self.ticks == speed * 6:
+            self.counter = 0
+
+        # back on ground
+        elif self.ticks < speed * 7:
+            self._move_to_angles_incrementally(90, 180, 160, 180, 90, 90, 90, 90, self.counter, speed)
+        elif self.ticks == speed * 7:
+            self.counter = 0
+        
         # balance on right foot
-        elif self.ticks == REFRESH_RATE * 3:
-            self._set_lower_angles(90, 50)
-        elif self.ticks == REFRESH_RATE * 7 / 2:
-            self._set_lower_angles(0, 50)
-        elif self.ticks == REFRESH_RATE * 7 / 2:
-            self._set_lower_angles(0, 0)
-        # move left foot in a fancy way
-        elif self.ticks == REFRESH_RATE * 4:
-            self._set_lower_angles(180, 0)
-            self._set_upper_angles(0, 90)
-        elif self.ticks == REFRESH_RATE * 9 / 2:
-            self._set_lower_angles(0, 0)
-            self._set_upper_angles(180, 90)
-        elif self.ticks == REFRESH_RATE * 5:
-            self.reset()
-            self.ticks = 0
+        elif self.ticks < speed * 8:
+            self._move_to_angles_incrementally(90, 90, 90, 90, 90, 90, 90, 50, self.counter, speed)
+        elif self.ticks == speed * 8:
+            self.counter = 0
+        elif self.ticks < speed * 9:
+            self._move_to_angles_incrementally(90, 90, 90, 50, 110, 90, 0, 50, self.counter, speed)
+        elif self.ticks == speed * 9:
+            self.counter = 0
+        elif self.ticks < speed * 10:
+            self._move_to_angles_incrementally(110, 90, 0, 50, 90, 90, 0, 0, self.counter, speed)
+        elif self.ticks == speed * 10:
+            self.counter = 0
+        
+        # move left foot in air
+        elif self.ticks < speed * 11:
+            self._move_to_angles_incrementally(90, 90, 0, 0, 0, 90, 180, 0, self.counter, speed)
+        elif self.ticks == speed * 11:
+            self.counter = 0
+        elif self.ticks < speed * 12:
+            self._move_to_angles_incrementally(0, 90, 180, 0, 150, 90, 0, 0, self.counter, speed)
+        elif self.ticks == speed * 12:
+            self.counter = 0
+        elif self.ticks < speed * 13:
+            self._move_to_angles_incrementally(150, 90, 0, 0, 0, 90, 180, 0, self.counter, speed)
+        elif self.ticks == speed * 13:
+            self.counter = 0
+        elif self.ticks < speed * 14:
+            self._move_to_angles_incrementally(0, 90, 180, 0, 150, 90, 0, 0, self.counter, speed)
+        elif self.ticks == speed * 14:
+            self.counter = 0
+        
+        # back on ground
+        elif self.ticks < speed * 15:
+            self._move_to_angles_incrementally(150, 90, 0, 0, 90, 90, 90, 90, self.counter, speed)
+        elif self.ticks == speed * 15:
+            self.counter = 0
             self.cycles += 1
+            self.ticks = 0
 
         # Finish after 2 cycles
         if self.cycles == 2:
@@ -208,50 +246,86 @@ class Robot:
 
     def _walk_backwards(self):
         '''
-        Lift left foot, move it forward, then lower it
-        Lift right foot, move it forward, then lower it
-        total position = 6
+        Lift left foot, move it backwards, then lower it
+        Lift right foot, move it backwards, then lower it
+        total position = 15
         total cycles = 2
         '''
-        # get on left foot
-        if self.ticks == REFRESH_RATE / 4:
-            self._set_lower_angles(120, 180)
-        elif self.ticks == REFRESH_RATE / 2:
-            self._set_lower_angles(180, 180)
-        # move right foot forward
-        elif self.ticks == REFRESH_RATE * 3 / 4:
-            self._set_upper_angles(90, 30)
-        elif self.ticks == REFRESH_RATE:
-            self._set_upper_angles(30, 90) 
-        # set the right foot down
-        elif self.ticks == REFRESH_RATE * 5 / 4:
-            self._set_lower_angles(140, 140)
-        elif self.ticks == REFRESH_RATE * 3 / 2:
-            self._set_lower_angles(90, 90)
-        elif self.ticks == REFRESH_RATE * 7 / 4:
-            self.reset()
+        speed = self.MEDIUM_MOVE
         
-        # repeat for right foot
-        if self.ticks == REFRESH_RATE * 2:
-            self._set_lower_angles(90, 50)
-        elif self.ticks == REFRESH_RATE * 9 / 4:
-            self._set_lower_angles(0, 50)
-        elif self.ticks == REFRESH_RATE * 5 / 2:
-            self._set_lower_angles(0, 0)
-        # move left foot forward
-        elif self.ticks == REFRESH_RATE * 11 / 4:
-            self._set_upper_angles(40, 90)
-        elif self.ticks == REFRESH_RATE * 3:
-            self._set_upper_angles(90, 140)
-        # set the left foot down
-        elif self.ticks == REFRESH_RATE * 13 / 4:
-            self._set_lower_angles(50, 50)
-        elif self.ticks == REFRESH_RATE * 7 / 2:
-            self._set_lower_angles(90, 90)
-        elif self.ticks == REFRESH_RATE * 15 / 4:
-            self.reset()
-            self.ticks = 0
+        # balance on left foot
+        if self.ticks < speed:
+            self._move_to_angles_incrementally(90, 90, 90, 90, 90, 90, 120, 180, self.counter, speed)
+        elif self.ticks == speed:
+            self.counter = 0
+        elif self.ticks < speed * 2:
+            self._move_to_angles_incrementally(90, 90, 120, 180, 90, 90, 160, 180, self.counter, speed)
+        elif self.ticks == speed * 2:
+            self.counter = 0
+        
+        # move right foot back
+        elif self.ticks < speed * 3:
+            self._move_to_angles_incrementally(90, 90, 160, 180, 90, 30, 160, 180, self.counter, speed)
+        elif self.ticks == speed * 3:
+            self.counter = 0
+        elif self.ticks < speed * 4:
+            self._move_to_angles_incrementally(90, 30, 160, 180, 30, 90, 160, 180, self.counter, speed)
+        elif self.ticks == speed * 4:
+            self.counter = 0
+        
+        # set right foot down
+        elif self.ticks < speed * 5:
+            self._move_to_angles_incrementally(30, 90, 160, 180, 30, 90, 140, 140, self.counter, speed)
+        elif self.ticks == speed * 5:
+            self.counter = 0
+        elif self.ticks < speed * 6:
+            self._move_to_angles_incrementally(30, 90, 140, 140, 30, 90, 90, 90, self.counter, speed)
+        elif self.ticks == speed * 6:
+            self.counter = 0
+        elif self.ticks < speed * 7:
+            self._move_to_angles_incrementally(30, 90, 90, 90, 90, 90, 90, 90, self.counter, speed)
+        elif self.ticks == speed * 7:
+            self.counter = 0
+
+        # balance on right foot
+        elif self.ticks < speed * 8:
+            self._move_to_angles_incrementally(90, 90, 90, 90, 90, 90, 90, 50, self.counter, speed)
+        elif self.ticks == speed * 8:
+            self.counter = 0
+        elif self.ticks < speed * 9:
+            self._move_to_angles_incrementally(90, 90, 90, 50, 110, 90, 0, 50, self.counter, speed)
+        elif self.ticks == speed * 9:
+            self.counter = 0
+        elif self.ticks < speed * 10:
+            self._move_to_angles_incrementally(110, 90, 0, 50, 90, 90, 0, 0, self.counter, speed)
+        elif self.ticks == speed * 10:
+            self.counter = 0
+            
+        # move left foot back
+        elif self.ticks < speed * 11:
+            self._move_to_angles_incrementally(90, 90, 0, 0, 40, 90, 0, 0, self.counter, speed)
+        elif self.ticks == speed * 11:
+            self.counter = 0
+        elif self.ticks < speed * 12:
+            self._move_to_angles_incrementally(40, 90, 0, 0, 90, 140, 0, 0, self.counter, speed)
+        elif self.ticks == speed * 12:
+            self.counter = 0
+        
+        # set left foot down
+        elif self.ticks < speed * 13:
+            self._move_to_angles_incrementally(90, 140, 0, 0, 90, 140, 50, 50, self.counter, speed)
+        elif self.ticks == speed * 13:
+            self.counter = 0
+        elif self.ticks < speed * 14:
+            self._move_to_angles_incrementally(90, 140, 50, 50, 90, 140, 90, 90, self.counter, speed)
+        elif self.ticks == speed * 14:
+            self.counter = 0
+        elif self.ticks < speed * 15:
+            self._move_to_angles_incrementally(90, 140, 90, 90, 90, 90, 90, 90, self.counter, speed)
+        elif self.ticks == speed * 15:
+            self.counter = 0
             self.cycles += 1
+            self.ticks = 0
         
         # finish after 2 cycles
         if self.cycles == 5:
@@ -260,7 +334,7 @@ class Robot:
             self.cycles = 0
             self.move_count += 1
 
-    def _move6(self):
+    def _circle(self):
         self.move_count += 1
         
     def _move_to_angles_incrementally(
