@@ -24,7 +24,7 @@ class Robot:
         servo_left_lower_foot,
         servo_right_upper_foot,
         servo_left_upper_foot,
-        LCD,
+        LCD: LCD,
     ):
         """Initialize the robot"""
         self.servo_right_lower_foot: servo.Servo = servo_right_lower_foot
@@ -43,36 +43,29 @@ class Robot:
         self.move_count = 1  # Move counter
         self.cycles = 0  # Cycle counter for each move
         self.LCDObj = LCD
-        self.changed_moves = False  # counts when the move changes
+        self.last_max_tick = 0 # Last max tick for the move
 
     def refresh(self):
         """Increment the robot timing and make it dance accordingly"""
-        # print("Move: ", self.move_count)
-        # self.is_changed_move()  # clears the display if necessary
         if self.move_count == 1:
+            self.LCDObj.displayIntro(self.ticks + (self.last_max_tick * self.cycles))
             self._balancing_act(2)
-            # self.LCDObj.displayIntro(self.ticks) # TODO not working
-            # self.LCDObj.displayRainbowStreamManual(self.ticks)
         elif self.move_count == 2:
+            self.LCDObj.displayDoge(self.ticks + (self.last_max_tick * self.cycles))
             self._swim(3)
-            # print(self.changed_moves)
-            self.LCDObj.displayDoge(self.ticks)
-            # if self.changed_moves == True:
-            #     print("3")
-            #     self.LCDObj.clearDisplay()
-            #     self.changed_moves = False
-            #     self.LCDObj.displayDoge(self.ticks)
         elif self.move_count == 3:
+            # perfectly timed combo
+            self.LCDObj.displayArrows(self.ticks + (self.last_max_tick * self.cycles))
             self._walk_forwards(2)
         elif self.move_count == 4:
+            self.LCDObj.displayRobotFaces(self.ticks + (self.last_max_tick * self.cycles))
             self._the_sweep(3)
-            self.LCDObj.displayRobotFaces(self.ticks)  # TODO ticks
         elif self.move_count == 5:
-            self._walk_backwards(2)
-            self.LCDObj.displayArrows(self.ticks)
+            self.LCDObj.displayAsciiFace(self.ticks + (self.last_max_tick * self.cycles))
+            self._walk_backwards(3)
         elif self.move_count == 6:
+            self.LCDObj.displayRainbowStreamManual(self.ticks + (self.last_max_tick * self.cycles))
             self._circle(5)
-            self.displayRainbowStreamManual()
         self.ticks += 1
         self.counter += 1
 
@@ -95,6 +88,7 @@ class Robot:
         elif self.ticks == speed * 4:
             self.counter = 0
             self.cycles += 1
+            self.last_max_tick = self.ticks
             self.ticks = 0
 
         if self.cycles == cycles:
@@ -102,8 +96,8 @@ class Robot:
             self.ticks = 0
             self.cycles = 0
             self.counter = 0
+            self.last_max_tick = 0
             self.move_count += 1
-            self.changed_moves = True
 
     def _the_sweep(self, cycles: int):
         speed = self.MEDIUM_MOVE
@@ -128,6 +122,7 @@ class Robot:
         elif self.ticks == speed * 4:
             self.counter = 0
             self.cycles += 1
+            self.last_max_tick = self.ticks
             self.ticks = 0
 
         if self.cycles == cycles:
@@ -135,9 +130,8 @@ class Robot:
             self.ticks = 0
             self.cycles = 0
             self.counter = 0
+            self.last_max_tick = 0
             self.move_count += 1
-            self.changed_moves = True
-            print(self.changed_moves)
 
     def _balancing_act(self, cycles: int):
         speed = self.MEDIUM_MOVE
@@ -214,12 +208,14 @@ class Robot:
         elif self.ticks == speed * 15:
             self.counter = 0
             self.cycles += 1
+            self.last_max_tick = self.ticks
             self.ticks = 0
 
         if self.cycles == cycles:
             self.reset()
             self.ticks = 0
             self.cycles = 0
+            self.last_max_tick = 0
             self.move_count += 1
 
     def _walk_backwards(self, cycles: int):
@@ -293,12 +289,14 @@ class Robot:
         elif self.ticks == speed * 13:
             self.counter = 0
             self.cycles += 1
+            self.last_max_tick = self.ticks
             self.ticks = 0
         
         if self.cycles == cycles:
             self.reset()
             self.ticks = 0
             self.cycles = 0
+            self.last_max_tick = 0
             self.move_count += 1
         
     def _circle(self, cycles: int):
@@ -306,7 +304,7 @@ class Robot:
         Circle around the center of the robot
         - Lift right foot, move it forward, then lower it and adjust the left foot
         '''
-        speed = self.MEDIUM_MOVE
+        speed = self.FAST_MOVE
         
         # balance on left foot
         if self.ticks < speed:
@@ -334,12 +332,14 @@ class Robot:
         elif self.ticks == speed * 5:
             self.counter = 0
             self.cycles += 1
+            self.last_max_tick = self.ticks
             self.ticks = 0
         
         if self.cycles == cycles:
             self.reset()
             self.ticks = 0
             self.cycles = 0
+            self.last_max_tick = 0
             self.move_count += 1
     
     def _walk_forwards(self, cycles: int):
@@ -405,12 +405,14 @@ class Robot:
         elif self.ticks == speed * 11:
             self.counter = 0
             self.cycles += 1
+            self.last_max_tick = self.ticks
             self.ticks = 0
         
         if self.cycles == cycles:
             self.reset()
             self.ticks = 0
             self.cycles = 0
+            self.last_max_tick = 0
             self.move_count += 1
         
     def _move_to_angles_incrementally(
