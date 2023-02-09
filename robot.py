@@ -26,7 +26,7 @@ class Robot:
         # constants
         self.SLOW_MOVE = int(REFRESH_RATE / 4)
         self.MEDIUM_MOVE = int(REFRESH_RATE / 8)
-        self.FAST_MOVE = int(REFRESH_RATE / 16)
+        self.FAST_MOVE = int(REFRESH_RATE / 12)
         
         # tracking info
         self.ticks = 0  # Timing counter
@@ -38,57 +38,19 @@ class Robot:
         """Increment the robot timing and make it dance accordingly"""
         print("Move: ", self.move_count)
         if self.move_count == 1:
-            self._inward_push(4)
+            self._backward_balance(2)
         elif self.move_count == 2:
-            self._the_sweep(3)
+            self._inward_push(4)
         elif self.move_count == 3:
-            self._walk_forwards(3)
+            self._walk_forwards(2)
         elif self.move_count == 4:
-            self._balancing_act(2)
+            self._the_sweep(3)
         elif self.move_count == 5:
             self._walk_backwards(2)
         elif self.move_count == 6:
             self._circle(5)
         self.ticks += 1
         self.counter += 1
-
-    def _wobble(self, cycles: int):
-        '''
-        total position = 2
-        change position every 0.5 seconds
-        total cycles = 5
-        '''
-        speed = self.MEDIUM_MOVE
-        if self.ticks < speed:
-            # lower angles from 90, 90 to 0, 0
-            self._move_to_angles_incrementally(90, 90, 90, 90, 90, 90, 0, 0, self.counter, speed)
-        elif self.ticks == speed:
-            self.counter = 0
-        elif self.ticks < speed * 2:
-            # lower angles from 0, 0 to 90, 90
-            self._move_to_angles_incrementally(90, 90, 0, 0, 90, 90, 90, 90, self.counter, speed)
-        elif self.ticks == speed * 2:
-            self.counter = 0
-        elif self.ticks < speed * 3:
-            # lower angles from 90, 90 to 180, 180
-            self._move_to_angles_incrementally(90, 90, 90, 90, 90, 90, 180, 180, self.counter, speed)
-        elif self.ticks == speed * 3:
-            self.counter = 0
-        elif self.ticks < speed * 4:
-            # lower angles from 180, 180 to 90, 90
-            self._move_to_angles_incrementally(90, 90, 180, 180, 90, 90, 90, 90, self.counter, speed)
-        elif self.ticks == speed * 4:
-            self.counter = 0
-            self.cycles += 1
-            self.ticks = 0
-
-        # Finish after 5 cycles
-        if self.cycles == cycles:
-            self.reset()
-            self.ticks = 0
-            self.cycles = 0
-            self.counter = 0
-            self.move_count += 1
 
     def _inward_push(self, cycles: int):
         '''
@@ -105,6 +67,32 @@ class Robot:
         elif self.ticks < speed * 2:
             # lower angles from 0, 180 to 90, 90
             self._move_to_angles_incrementally(90, 90, 0, 180, 90, 90, 90, 90, self.counter, speed)
+        elif self.ticks == speed * 2:
+            self.counter = 0
+            self.cycles += 1
+            self.ticks = 0
+
+        # Finish after 5 cycles
+        if self.cycles == cycles:
+            self.reset()
+            self.ticks = 0
+            self.cycles = 0
+            self.counter = 0
+            self.move_count += 1
+            
+    def _backward_balance(self, cycles: int):
+        '''
+        total position = 2
+        change position every 0.5 seconds
+        total cycles = 5
+        '''
+        speed = self.MEDIUM_MOVE
+        if self.ticks < speed:
+            self._move_to_angles_incrementally(90, 90, 90, 90, 90, 90, 180, 0, self.counter, speed)
+        elif self.ticks == speed:
+            self.counter = 0
+        elif self.ticks < speed * 2:
+            self._move_to_angles_incrementally(90, 90, 180, 0, 90, 90, 90, 90, self.counter, speed)
         elif self.ticks == speed * 2:
             self.counter = 0
             self.cycles += 1
@@ -251,7 +239,7 @@ class Robot:
         total position = 15
         total cycles = 2
         '''
-        speed = self.MEDIUM_MOVE
+        speed = self.FAST_MOVE
         
         # balance on left foot
         if self.ticks < speed:
@@ -275,54 +263,46 @@ class Robot:
         
         # set right foot down
         elif self.ticks < speed * 5:
-            self._move_to_angles_incrementally(30, 90, 160, 180, 30, 90, 140, 140, self.counter, speed)
+            self._move_to_angles_incrementally(30, 90, 160, 180, 30, 90, 90, 90, self.counter, speed)
         elif self.ticks == speed * 5:
             self.counter = 0
         elif self.ticks < speed * 6:
-            self._move_to_angles_incrementally(30, 90, 140, 140, 30, 90, 90, 90, self.counter, speed)
-        elif self.ticks == speed * 6:
-            self.counter = 0
-        elif self.ticks < speed * 7:
             self._move_to_angles_incrementally(30, 90, 90, 90, 90, 90, 90, 90, self.counter, speed)
-        elif self.ticks == speed * 7:
+        elif self.ticks == speed * 6:
             self.counter = 0
 
         # balance on right foot
-        elif self.ticks < speed * 8:
+        elif self.ticks < speed * 7:
             self._move_to_angles_incrementally(90, 90, 90, 90, 90, 90, 90, 50, self.counter, speed)
+        elif self.ticks == speed * 7:
+            self.counter = 0
+        elif self.ticks < speed * 8:
+            self._move_to_angles_incrementally(90, 90, 90, 50, 110, 90, 0, 50, self.counter, speed)
         elif self.ticks == speed * 8:
             self.counter = 0
         elif self.ticks < speed * 9:
-            self._move_to_angles_incrementally(90, 90, 90, 50, 110, 90, 0, 50, self.counter, speed)
-        elif self.ticks == speed * 9:
-            self.counter = 0
-        elif self.ticks < speed * 10:
             self._move_to_angles_incrementally(110, 90, 0, 50, 90, 90, 0, 0, self.counter, speed)
-        elif self.ticks == speed * 10:
+        elif self.ticks == speed * 9:
             self.counter = 0
             
         # move left foot back
-        elif self.ticks < speed * 11:
+        elif self.ticks < speed * 10:
             self._move_to_angles_incrementally(90, 90, 0, 0, 40, 90, 0, 0, self.counter, speed)
-        elif self.ticks == speed * 11:
+        elif self.ticks == speed * 10:
             self.counter = 0
-        elif self.ticks < speed * 12:
+        elif self.ticks < speed * 11:
             self._move_to_angles_incrementally(40, 90, 0, 0, 90, 140, 0, 0, self.counter, speed)
-        elif self.ticks == speed * 12:
+        elif self.ticks == speed * 11:
             self.counter = 0
         
         # set left foot down
+        elif self.ticks < speed * 12:
+            self._move_to_angles_incrementally(90, 140, 0, 0, 90, 140, 90, 90, self.counter, speed)
+        elif self.ticks == speed * 12:
+            self.counter = 0
         elif self.ticks < speed * 13:
-            self._move_to_angles_incrementally(90, 140, 0, 0, 90, 140, 50, 50, self.counter, speed)
-        elif self.ticks == speed * 13:
-            self.counter = 0
-        elif self.ticks < speed * 14:
-            self._move_to_angles_incrementally(90, 140, 50, 50, 90, 140, 90, 90, self.counter, speed)
-        elif self.ticks == speed * 14:
-            self.counter = 0
-        elif self.ticks < speed * 15:
             self._move_to_angles_incrementally(90, 140, 90, 90, 90, 90, 90, 90, self.counter, speed)
-        elif self.ticks == speed * 15:
+        elif self.ticks == speed * 13:
             self.counter = 0
             self.cycles += 1
             self.ticks = 0
@@ -474,7 +454,6 @@ class Robot:
         increment_upper_right = float(ending_upper_right - starting_upper_right) / total_ticks
         increment_lower_left = float(ending_lower_left - starting_lower_left) / total_ticks
         increment_lower_right = float(ending_lower_right - starting_lower_right) / total_ticks
-        print(increment_lower_left)
 
         # Calculate the new angles
         new_upper_left = stating_upper_left + (increment_upper_left * local_counter)
@@ -539,3 +518,48 @@ class Robot:
         """Reset the robot to the starting position"""
         self._set_lower_angles(90, 90)
         self._set_upper_angles(90, 90)
+
+    
+    ##################################################################
+    #                        UNUSED MOVES                            #
+    ##################################################################
+    
+    def _wobble(self, cycles: int):
+        '''
+        total position = 2
+        change position every 0.5 seconds
+        total cycles = 5
+        '''
+        speed = self.MEDIUM_MOVE
+        if self.ticks < speed:
+            # lower angles from 90, 90 to 0, 0
+            self._move_to_angles_incrementally(90, 90, 90, 90, 90, 90, 0, 0, self.counter, speed)
+        elif self.ticks == speed:
+            self.counter = 0
+        elif self.ticks < speed * 2:
+            # lower angles from 0, 0 to 90, 90
+            self._move_to_angles_incrementally(90, 90, 0, 0, 90, 90, 90, 90, self.counter, speed)
+        elif self.ticks == speed * 2:
+            self.counter = 0
+        elif self.ticks < speed * 3:
+            # lower angles from 90, 90 to 180, 180
+            self._move_to_angles_incrementally(90, 90, 90, 90, 90, 90, 180, 180, self.counter, speed)
+        elif self.ticks == speed * 3:
+            self.counter = 0
+        elif self.ticks < speed * 4:
+            # lower angles from 180, 180 to 90, 90
+            self._move_to_angles_incrementally(90, 90, 180, 180, 90, 90, 90, 90, self.counter, speed)
+        elif self.ticks == speed * 4:
+            self.counter = 0
+            self.cycles += 1
+            self.ticks = 0
+
+        # Finish after 5 cycles
+        if self.cycles == cycles:
+            self.reset()
+            self.ticks = 0
+            self.cycles = 0
+            self.counter = 0
+            self.move_count += 1
+
+        
