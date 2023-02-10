@@ -77,9 +77,6 @@ class PicoConnector:
                 pass
         return result
 
-    # def sendCommandMessage(self, message):
-    #     self.pico.write(bytes(message, "utf-8"))
-
     def listenSuccessMessage(self):
         while True:
             data = self.pico.readline()
