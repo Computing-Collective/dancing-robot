@@ -12,14 +12,14 @@ For individual move selection
 move = -1
 
 
-@app.route('/move', methods=['GET'])
+@app.route('/move', methods=['GET'], defaults={'path': ''})
 def get_move(path):
     """Returns the current move as a string"""
     global move
     return str(move)
 
 
-@app.route('/move', methods=['POST'])
+@app.route('/move', methods=['POST'], defaults={'path': ''})
 def post_move(path):
     """Sets the current move"""
     global move
