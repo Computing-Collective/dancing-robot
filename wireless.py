@@ -1,9 +1,6 @@
-import os
-import time
-import ssl
-import wifi
-import socketpool
-import adafruit_requests
+# Group: 24
+# Names: Divy, Elio, Kelvin, Matthew
+
 from constants import *
 
 # https://learn.adafruit.com/pico-w-wifi-with-circuitpython/pico-w-requests-test-adafruit-quotes
@@ -24,4 +21,4 @@ class Wireless:
             return int(output)
         except Exception as e:
             print("Error requesting move: {}".format(e))
-            return None
+            return -1
