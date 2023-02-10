@@ -30,7 +30,7 @@ class PicoConnector:
             pico = serial.Serial(
                 port=portName, baudrate=9600, timeout=1.5, write_timeout=1.5
             )
-            time.sleep(2)  # Giving time to Pico to wake up
+            time.sleep(10)  # Giving time to Pico to wake up
 
             try:
                 pico.write(
