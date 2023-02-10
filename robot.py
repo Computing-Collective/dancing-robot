@@ -1,4 +1,5 @@
 from adafruit_motor import servo
+from wireless import Wireless
 
 from constants import *
 
@@ -44,6 +45,10 @@ class Robot:
         self.cycles = 0  # Cycle counter for each move
         self.LCDObj = LCD
         self.last_max_tick = 0 # Last max tick for the move
+        self.move_changed = False
+
+        # wireless control
+        self.wireless = Wireless()
 
     def refresh(self):
         """Increment the robot timing and make it dance accordingly"""
@@ -66,6 +71,18 @@ class Robot:
         elif self.move_count == 6:
             self.LCDObj.displayRainbowStreamManual(self.ticks + (self.last_max_tick * self.cycles))
             self._circle(5)
+        
+        # Check for wireless signal to change move
+        # If receiving a valid move, perform that move once and then continue with the move count from there
+        # Sender local host has a constant value that is read by the pico wirelessly
+        if self.move_changed == True:
+            move:int = self.wireless.request_move()
+            if move != -1:
+                self.ticks = 0
+                self.move_count = move
+            self.move_changed = False
+
+        
         self.ticks += 1
         self.counter += 1
 
@@ -98,6 +115,7 @@ class Robot:
             self.counter = 0
             self.last_max_tick = 0
             self.move_count += 1
+            self.move_changed = True
 
     def _the_sweep(self, cycles: int):
         speed = self.MEDIUM_MOVE
@@ -132,6 +150,7 @@ class Robot:
             self.counter = 0
             self.last_max_tick = 0
             self.move_count += 1
+            self.move_changed = True
 
     def _balancing_act(self, cycles: int):
         speed = self.MEDIUM_MOVE
@@ -217,6 +236,7 @@ class Robot:
             self.cycles = 0
             self.last_max_tick = 0
             self.move_count += 1
+            self.move_changed = True
 
     def _walk_backwards(self, cycles: int):
         '''
@@ -298,6 +318,7 @@ class Robot:
             self.cycles = 0
             self.last_max_tick = 0
             self.move_count += 1
+            self.move_changed = True
         
     def _circle(self, cycles: int):
         '''
@@ -341,6 +362,7 @@ class Robot:
             self.cycles = 0
             self.last_max_tick = 0
             self.move_count += 1
+            self.move_changed = True
     
     def _walk_forwards(self, cycles: int):
         '''
@@ -414,6 +436,7 @@ class Robot:
             self.cycles = 0
             self.last_max_tick = 0
             self.move_count += 1
+            self.move_changed = True
         
     def _move_to_angles_incrementally(
         self,
@@ -543,6 +566,7 @@ class Robot:
             self.cycles = 0
             self.counter = 0
             self.move_count += 1
+            self.move_changed = True
 
     def _inward_push(self, cycles: int):
         speed = self.MEDIUM_MOVE
@@ -565,5 +589,6 @@ class Robot:
             self.cycles = 0
             self.counter = 0
             self.move_count += 1
+            self.move_changed = True
 
     # def is_changed_move(self):
