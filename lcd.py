@@ -1,9 +1,3 @@
-# https://github.com/adafruit/Adafruit_CircuitPython_ST7789/blob/main/examples/st7789_240x135_simpletest_Pimoroni_Pico_Display_Pack.py
-# https://docs.circuitpython.org/projects/st7789/en/latest/examples.html#x135
-# https://docs.circuitpython.org/projects/st7789/en/latest/
-# https://learn.adafruit.com/making-a-pyportal-user-interface-displayio/groups
-# https://github.com/adafruit/Adafruit_CircuitPython_ST7789/blob/main/examples/st7789_240x135_simpletest_Pimoroni_Pico_Display_Pack.py
-
 import board
 import displayio  # https://docs.circuitpython.org/en/latest/shared-bindings/displayio/index.html
 
@@ -82,25 +76,28 @@ class LCD:
             self.color_bitmap, pixel_shader=color_pal, x=0, y=0
         )
         self.splash.append(bg_sprite)
-        
+
         """
         Rainbow
         """
-        self.rainbow = [] # list of displayio.Bitmap
+        self.rainbow = []  # list of displayio.Bitmap
         self.rainbow_counter = 0
-        
+
         """
         Doge
         """
         odb = displayio.OnDiskBitmap("/doge.bmp")
         self.face = displayio.TileGrid(odb, pixel_shader=odb.pixel_shader)
-        
 
     # Example temp function for displaying basics
-    def testDisplay(self, ticks): # works
+    def testDisplay(self, ticks):  # works
         if ticks == 1:
             self.displayText(
-                "o__0", WHITE, self.display.width // 2, self.display.height // 2, FONT_SCALE_MEDIUM
+                "o__0",
+                WHITE,
+                self.display.width // 2,
+                self.display.height // 2,
+                FONT_SCALE_MEDIUM,
             )
 
         # self.displayText(":)", BLACK, self.display.width // 2, self.display.height // 2, FONT_SCALE_MEDIUM)
@@ -111,6 +108,7 @@ class LCD:
 
     def displayDoge(self, ticks):
         if ticks == 1:
+            self.clearDisplay()
             self.splash.append(self.face)
 
     def displayIntro(self, ticks):
@@ -120,8 +118,9 @@ class LCD:
         "Hello my"
         "Name is"      ---->    "DIVY"
         """
-        if ticks == 0:
+        if ticks == 1:
             print("displaying Intro")
+            self.clearDisplay()
             self.displayText(
                 "Hi, my",
                 WHITE,
@@ -129,8 +128,9 @@ class LCD:
                 self.display.height // 3,
                 FONT_SCALE_LARGE,
             )
-        
+
         elif ticks == REFRESH_RATE:
+            # self.clearDisplay()
             self.displayText(
                 "name is",
                 WHITE,
@@ -149,12 +149,49 @@ class LCD:
                 FONT_SCALE_EXTRA_LARGE,
             )
 
+    def displayEnding(self, ticks):
+        if ticks == 0:
+            self.clearDisplay()
+            self.displayText(
+                "THANK YOU",
+                WHITE,
+                self.display.width // 2,
+                self.display.height // 2,
+                FONT_SCALE_LARGE,
+            )
+        elif ticks == REFRESH_RATE:
+            self.displayText(
+                "____",
+                BLACK,
+                self.display.width // 2,
+                2 * self.display.height // 3,
+                FONT_SCALE_LARGE,
+            )
+        elif ticks == REFRESH_RATE * 2:
+            self.clearDisplay()
+            self.displayText(
+                "[^] [^]",
+                BLACK,
+                self.display.width // 2,
+                self.display.height // 3,
+                FONT_SCALE_LARGE,
+            )
+        elif ticks == REFRESH_RATE * 3:
+            self.displayText(
+                "O",
+                BLACK,
+                self.display.width // 2,
+                2 * self.display.height // 3,
+                FONT_SCALE_LARGE,
+            )
+
     def displayAsciiFace(self, ticks):
         """
         Animation time is 3 seconds, but it can be stopped in the middle
         """
-        if ticks == 0:
-            self.clearDisplay()
+        if ticks == 1:
+            # self.clearDisplay()
+            self.color_bitmap.fill(1)
             self.displayText(
                 "[||] [||]",
                 BLACK,
@@ -192,7 +229,7 @@ class LCD:
         """
         Only one frame
         """
-        if ticks == 0:
+        if ticks == 1:
             self.clearDisplay()
             palette = displayio.Palette(3)
             palette[0] = WHITE
@@ -260,8 +297,13 @@ class LCD:
         palette[1] = MAGENTA
         palette[2] = ORANGE
 
-        if ticks % (REFRESH_RATE * 3 / 2) == 1:
+        # if ticks == 1:
+        #     self.color_bitmap.fill(0)
+        refresh = 1.3 * 2
+
+        if ticks % int(REFRESH_RATE * refresh) == 1:
             self.clearDisplay()
+            # self.color_bitmap.fill(0)
             # points for a triangle (nose)
             points = [
                 (140, 30),
@@ -281,8 +323,9 @@ class LCD:
             self.splash.append(right_rect)
             self.splash.append(right_triangle)
 
-        elif ticks % (REFRESH_RATE * 3 / 4) == 1:
+        elif ticks % int(REFRESH_RATE * refresh / 2) == 1:
             self.clearDisplay()
+            # self.color_bitmap.fill(0)
             # points for a triangle (nose)
             points = [
                 (100, 30),
@@ -375,7 +418,7 @@ class LCD:
         elif ticks % (REFRESH_RATE * 3) == 101:
             self.clearDisplay()
             self.color_bitmap.fill(1)
-            self.displayAsciiFace(0)
+            self.displayAsciiFace(1)
         elif ticks % (REFRESH_RATE * 3) == 201:
             self.displayAsciiFace(REFRESH_RATE)
 

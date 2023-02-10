@@ -10,28 +10,17 @@
 
 import time
 import board
-from digitalio import DigitalInOut, Direction, Pull
+from digitalio import DigitalInOut, Direction
 import pwmio
 from adafruit_motor import servo
-
 import board
 import displayio  # https://docs.circuitpython.org/en/latest/shared-bindings/displayio/index.html
-
 import busio
-
-import digitalio
-import time
-
-import terminalio  # https://docs.circuitpython.org/en/latest/shared-bindings/terminalio/index.html
-
-from adafruit_st7789 import (
-    ST7789,
-)  # https://docs.circuitpython.org/projects/st7789/en/latest/
-from adafruit_display_text import (
-    label,
-)  # https://docs.circuitpython.org/projects/display_text/en/latest/api.html#adafruit_display_text.bitmap_label.Label
-import vectorio
-
+import os
+import ssl
+import wifi
+import socketpool
+import adafruit_requests
 
 from robot import Robot
 from constants import *
@@ -45,28 +34,45 @@ def main():
     led = DigitalInOut(board.LED)
     led.direction = Direction.OUTPUT
     led.value = True
+    frequency = 100
 
     # Servo setup
     # Note: Tune pulse for specific servos
-    pwm_lower_right_foot = pwmio.PWMOut(board.GP20, duty_cycle=DUTY_CYCLE, frequency=50)
+    pwm_lower_right_foot = pwmio.PWMOut(
+        board.GP20, duty_cycle=DUTY_CYCLE, frequency=frequency
+    )
     servo_lower_right_foot = servo.Servo(
         pwm_lower_right_foot, actuation_range=180, min_pulse=1000, max_pulse=2000
     )
 
-    pwm_lower_left_foot = pwmio.PWMOut(board.GP19, duty_cycle=DUTY_CYCLE, frequency=50)
+    pwm_lower_left_foot = pwmio.PWMOut(
+        board.GP19, duty_cycle=DUTY_CYCLE, frequency=frequency
+    )
     servo_lower_left_foot = servo.Servo(
         pwm_lower_left_foot, actuation_range=180, min_pulse=1000, max_pulse=2000
     )
 
-    pwm_upper_right_foot = pwmio.PWMOut(board.GP21, duty_cycle=DUTY_CYCLE, frequency=50)
+    pwm_upper_right_foot = pwmio.PWMOut(
+        board.GP21, duty_cycle=DUTY_CYCLE, frequency=frequency
+    )
     servo_upper_right_foot = servo.Servo(
         pwm_upper_right_foot, actuation_range=180, min_pulse=1000, max_pulse=2000
     )
 
-    pwm_upper_left_foot = pwmio.PWMOut(board.GP18, duty_cycle=DUTY_CYCLE, frequency=50)
+    pwm_upper_left_foot = pwmio.PWMOut(
+        board.GP18, duty_cycle=DUTY_CYCLE, frequency=frequency
+    )
     servo_upper_left_foot = servo.Servo(
         pwm_upper_left_foot, actuation_range=180, min_pulse=1000, max_pulse=2000
     )
+
+    # Wifi setup
+
+    wifi.radio.connect(
+        os.getenv("CIRCUITPY_WIFI_SSID"), os.getenv("CIRCUITPY_WIFI_PASSWORD")
+    )
+    pool = socketpool.SocketPool(wifi.radio)
+    requests = adafruit_requests.Session(pool, ssl.create_default_context())
 
     """
     Instantiate the LCD
@@ -95,12 +101,17 @@ def main():
 
     LCDObj = LCD(display_bus)
 
+    """
+    Instantiate the robot
+    """
+
     robot = Robot(
         servo_lower_right_foot,
         servo_lower_left_foot,
         servo_upper_right_foot,
         servo_upper_left_foot,
         LCDObj,
+        requests,
     )
 
     # Main logic loop
