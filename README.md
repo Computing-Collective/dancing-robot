@@ -1,1 +1,4 @@
-# P1_L2A_G24
+# Project 1: Dancing Robot
+
+Group: 24
+Names: Divy, Elio, Kelvin, Matthew

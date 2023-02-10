@@ -1,13 +1,8 @@
-import board
+# Group: 24
+# Names: Divy, Elio, Kelvin, Matthew
+
 import displayio  # https://docs.circuitpython.org/en/latest/shared-bindings/displayio/index.html
-
-import busio
-
-import digitalio
-import time
-
 import terminalio  # https://docs.circuitpython.org/en/latest/shared-bindings/terminalio/index.html
-
 from adafruit_st7789 import (
     ST7789,
 )  # https://docs.circuitpython.org/projects/st7789/en/latest/
@@ -424,6 +419,7 @@ class LCD:
 
     # """
     # Superloop
+    # - For LCD individual testing and development
     # """
     # def refresh(self):
     #     while True:

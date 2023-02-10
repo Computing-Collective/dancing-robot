@@ -14,7 +14,8 @@ from digitalio import DigitalInOut, Direction
 import pwmio
 from adafruit_motor import servo
 import board
-import displayio  # https://docs.circuitpython.org/en/latest/shared-bindings/displayio/index.html
+# https://docs.circuitpython.org/en/latest/shared-bindings/displayio/index.html
+import displayio
 import busio
 import os
 import ssl

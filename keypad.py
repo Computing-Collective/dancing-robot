@@ -1,3 +1,8 @@
+# Group: 24
+# Names: Divy, Elio, Kelvin, Matthew
+
+## Proof of concept for a 4x3 keypad (not yet in use)
+
 import board
 import pwmio
 import digitalio

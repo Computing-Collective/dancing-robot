@@ -1,3 +1,6 @@
+# Group: 24
+# Names: Divy, Elio, Kelvin, Matthew
+
 from flask import Flask, request
 from flask_cors import CORS
 

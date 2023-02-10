@@ -1,18 +1,16 @@
-import os
-import time
-import ssl
-import wifi
-import socketpool
-import microcontroller
-import adafruit_requests
+# Group: 24
+# Names: Divy, Elio, Kelvin, Matthew
+
 from constants import *
+
+# https://learn.adafruit.com/pico-w-wifi-with-circuitpython/pico-w-requests-test-adafruit-quotes
 
 
 class Wireless:
-    def __init__(self):
-        wifi.radio.connect(os.getenv('CIRCUITPY_WIFI_SSID'), os.getenv('CIRCUITPY_WIFI_PASSWORD'))
-        pool = socketpool.SocketPool(wifi.radio)
-        self.requests = adafruit_requests.Session(pool, ssl.create_default_context())
+    """Class to handle wireless communication with the server for demoing specific moves"""
+
+    def __init__(self, requests):
+        self.requests = requests
 
     def request_move(self):
         print("Requesting move from server")
@@ -24,4 +22,4 @@ class Wireless:
             return int(output)
         except Exception as e:
             print("Error requesting move: {}".format(e))
-            return None
+            return -1
