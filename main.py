@@ -9,7 +9,6 @@
 #   Servo right foot upper on GP21
 
 import time
-import board
 from digitalio import DigitalInOut, Direction
 import pwmio
 from adafruit_motor import servo
@@ -26,6 +25,7 @@ import adafruit_requests
 from robot import Robot
 from constants import *
 from lcd import *
+from led import *
 
 
 def main():
@@ -76,8 +76,58 @@ def main():
     requests = adafruit_requests.Session(pool, ssl.create_default_context())
 
     """
-    Instantiate the LCD
+    Setup led outputs
     """
+
+    # arms
+    led_arm_right_red = DigitalInOut(board.GP6)
+    led_arm_right_green = DigitalInOut(board.GP7)
+    led_arm_right_blue = DigitalInOut(board.GP5)
+
+    led_arm_right = (led_arm_right_red, led_arm_right_green, led_arm_right_blue)
+
+    led_arm_left_red = DigitalInOut(board.GP26)
+    led_arm_left_green = DigitalInOut(board.GP27)
+    led_arm_left_blue = DigitalInOut(board.GP28)
+
+    led_arm_left = (led_arm_left_red, led_arm_left_green, led_arm_left_blue)
+
+    # from birds eye
+    led_top_left = DigitalInOut(board.GP0)
+    led_top_right = DigitalInOut(board.GP2)
+    led_top_mid = DigitalInOut(board.GP1)
+
+    # set pins as output
+    led_arm_right_red.direction = Direction.OUTPUT
+    led_arm_right_green.direction = Direction.OUTPUT
+    led_arm_right_blue.direction = Direction.OUTPUT
+
+    led_arm_left_red.direction = Direction.OUTPUT
+    led_arm_left_green.direction = Direction.OUTPUT
+    led_arm_left_blue.direction = Direction.OUTPUT
+
+    led_top_left.direction = Direction.OUTPUT
+    led_top_right.direction = Direction.OUTPUT
+    led_top_mid.direction = Direction.OUTPUT
+
+    # set initial values to all off
+    led_top_left.value = False
+    led_top_right.value = False
+    led_top_mid.value = False
+
+    led_arm_right[0].value = False
+    led_arm_right[1].value = False
+    led_arm_right[2].value = False
+
+    led_arm_left[0].value = False
+    led_arm_left[1].value = False
+    led_arm_left[2].value = False
+
+    """
+    Instantiate the LED
+    """
+    led = LED(led_arm_right, led_arm_left, led_top_left, led_top_right, led_top_mid)
+
 
     # Release any resources currently in use for the displays
     displayio.release_displays()
@@ -120,6 +170,7 @@ def main():
     robot.reset()
     while True:
         robot.refresh()
+        led.refresh()
         time.sleep(1 / REFRESH_RATE)
 
 

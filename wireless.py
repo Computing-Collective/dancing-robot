@@ -1,6 +1,9 @@
-# Group: 24
-# Names: Divy, Elio, Kelvin, Matthew
-
+import os
+import time
+import ssl
+import wifi
+import socketpool
+import adafruit_requests
 from constants import *
 
 # https://learn.adafruit.com/pico-w-wifi-with-circuitpython/pico-w-requests-test-adafruit-quotes
@@ -8,7 +11,6 @@ from constants import *
 
 class Wireless:
     """Class to handle wireless communication with the server for demoing specific moves"""
-
     def __init__(self, requests):
         self.requests = requests
 
@@ -22,4 +24,4 @@ class Wireless:
             return int(output)
         except Exception as e:
             print("Error requesting move: {}".format(e))
-            return -1
+            return None

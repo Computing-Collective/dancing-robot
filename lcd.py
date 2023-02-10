@@ -71,7 +71,7 @@ class LCD:
             self.color_bitmap, pixel_shader=color_pal, x=0, y=0
         )
         self.splash.append(bg_sprite)
-
+        
         """
         Rainbow
         """

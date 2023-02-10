@@ -210,18 +210,21 @@ class Robot:
             )
         elif self.ticks == speed * 3:
             self.counter = 0
+
         elif self.ticks < speed * 4:
             self._move_to_angles_incrementally(
                 90, 0, 160, 0, 90, 180, 160, 180, self.counter, speed
             )
         elif self.ticks == speed * 4:
             self.counter = 0
+
         elif self.ticks < speed * 5:
             self._move_to_angles_incrementally(
                 90, 180, 160, 180, 90, 0, 160, 0, self.counter, speed
             )
         elif self.ticks == speed * 5:
             self.counter = 0
+
         elif self.ticks < speed * 6:
             self._move_to_angles_incrementally(
                 90, 0, 160, 0, 90, 180, 160, 180, self.counter, speed
@@ -244,12 +247,14 @@ class Robot:
             )
         elif self.ticks == speed * 8:
             self.counter = 0
+
         elif self.ticks < speed * 9:
             self._move_to_angles_incrementally(
                 90, 90, 90, 50, 110, 90, 0, 50, self.counter, speed
             )
         elif self.ticks == speed * 9:
             self.counter = 0
+
         elif self.ticks < speed * 10:
             self._move_to_angles_incrementally(
                 110, 90, 0, 50, 90, 90, 0, 0, self.counter, speed
@@ -264,18 +269,21 @@ class Robot:
             )
         elif self.ticks == speed * 11:
             self.counter = 0
+
         elif self.ticks < speed * 12:
             self._move_to_angles_incrementally(
                 0, 90, 180, 0, 150, 90, 0, 0, self.counter, speed
             )
         elif self.ticks == speed * 12:
             self.counter = 0
+
         elif self.ticks < speed * 13:
             self._move_to_angles_incrementally(
                 150, 90, 0, 0, 0, 90, 180, 0, self.counter, speed
             )
         elif self.ticks == speed * 13:
             self.counter = 0
+
         elif self.ticks < speed * 14:
             self._move_to_angles_incrementally(
                 0, 90, 180, 0, 150, 90, 0, 0, self.counter, speed
@@ -493,12 +501,14 @@ class Robot:
                 90, 90, 160, 180, 160, 90, 160, 180, self.counter, speed
             )
         elif self.ticks == speed * 3:
+            self.LCDObj.led_top_mid = True
             self.counter = 0
         elif self.ticks < speed * 4:
             self._move_to_angles_incrementally(
                 160, 90, 160, 180, 160, 90, 90, 90, self.counter, speed
             )
         elif self.ticks == speed * 4:
+            self.LCDObj.led_top_left = True
             self.counter = 0
 
         # set right foot down
@@ -528,6 +538,7 @@ class Robot:
             )
         elif self.ticks == speed * 8:
             self.counter = 0
+            self.LCDObj.led_top_mid = True
 
         # move left foot forward
         elif self.ticks < speed * 9:
@@ -542,6 +553,7 @@ class Robot:
             )
         elif self.ticks == speed * 10:
             self.counter = 0
+            self.LCDObj.led_top_right = False
         elif self.ticks < speed * 11:
             self._move_to_angles_incrementally(
                 90, 10, 90, 90, 90, 90, 90, 90, self.counter, speed
