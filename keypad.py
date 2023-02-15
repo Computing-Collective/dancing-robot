@@ -1,8 +1,3 @@
-# Group: 24
-# Names: Divy, Elio, Kelvin, Matthew
-
-## Proof of concept for a 4x3 keypad (not yet in use)
-
 import board
 import pwmio
 import digitalio
@@ -41,39 +36,39 @@ while True:
     pCol1.value = True
     pCol2.value = True
     if pRow0.value == False:
-        print("1 pressed")
+        print("1")
     elif pRow1.value == False:
-        print("4 pressed")
+        print("4")
     elif pRow2.value == False:
-        print("7 pressed")
+        print("7")
     elif pRow3.value == False:
-        print("* pressed")
+        print("*")
     time.sleep(0.1)
-    
+
     # check 2, 5, 8, 0
     pCol0.value = True
     pCol1.value = False
     pCol2.value = True
     if pRow0.value == False:
-        print("2 pressed")
+        print("2")
     elif pRow1.value == False:
-        print("5 pressed")
+        print("5")
     elif pRow2.value == False:
-        print("8 pressed")
+        print("8")
     elif pRow3.value == False:
-        print("0 pressed")
+        print("0")
     time.sleep(0.1)
-    
+
     # check 3, 6, 9, #
     pCol0.value = True
     pCol1.value = True
     pCol2.value = False
     if pRow0.value == False:
-        print("3 pressed")
+        print("3")
     elif pRow1.value == False:
-        print("6 pressed")
+        print("6")
     elif pRow2.value == False:
-        print("9 pressed")
+        print("9")
     elif pRow3.value == False:
-        print("# pressed")
+        print("#")
     time.sleep(0.1)
