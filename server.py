@@ -4,6 +4,13 @@
 from flask import Flask, request
 from flask_cors import CORS
 
+"""
+Server that runs on a laptop and controls the robot's movement.
+Devices can sent and receive data from the server via connecting
+to the server's IP address and port 5000 via the laptop's wifi
+hotspot.
+"""
+
 app = Flask(__name__)
 CORS(app)
 
@@ -28,16 +35,19 @@ def post_move(path):
     global move
     if request.is_json:
         content = request.json
-        field = content['move']
-        print(f"Received: {field}")
-        if isinstance(field, int) and field >= 1 and field <= 6:
-            move = field
-            return f"Move {field} Sent"
-        elif field == -1:
-            move = field
-            return "Returning to sequence"
+        if content is not None:
+            field = content['move']
+            print(f"Received: {field}")
+            if isinstance(field, int) and field >= 1 and field <= 6:
+                move = field
+                return f"Move {field} Sent"
+            elif field == -1:
+                move = field
+                return "Returning to sequence"
+            else:
+                return "Invalid move"
         else:
-            return "Invalid move"
+            return "Invalid JSON"
     else:
         return "Not JSON"
 

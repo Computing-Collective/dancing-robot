@@ -1,3 +1,6 @@
+# Group: 24
+# Names: Divy, Elio, Kelvin, Matthew
+
 import serial
 import sys
 import glob
@@ -7,6 +10,11 @@ from constants import *
 
 
 class PicoConnector:
+    """
+    Runs on a laptop connected to the second Pico via USB.
+    Reads the serial data from the Pico and sends it to the server
+    if it is a valid move.
+    """
     def __init__(self, serialPort=""):
         self.pico = None
         self.findPayload(
@@ -47,7 +55,7 @@ class PicoConnector:
 
             if data == "*":
                 print("[ALERT]    Divy     Found Payload on port", portName)
-                self.pico = pico
+                self.pico: serial.Serial = pico
                 return
 
     def getSerialPorts(self):

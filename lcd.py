@@ -1,8 +1,10 @@
 # Group: 24
 # Names: Divy, Elio, Kelvin, Matthew
 
-import displayio  # https://docs.circuitpython.org/en/latest/shared-bindings/displayio/index.html
-import terminalio  # https://docs.circuitpython.org/en/latest/shared-bindings/terminalio/index.html
+# https://docs.circuitpython.org/en/latest/shared-bindings/displayio/index.html
+import displayio
+# https://docs.circuitpython.org/en/latest/shared-bindings/terminalio/index.html
+import terminalio
 from adafruit_st7789 import (
     ST7789,
 )  # https://docs.circuitpython.org/projects/st7789/en/latest/
@@ -14,9 +16,7 @@ import vectorio
 from constants import *
 
 """
-
 Constants
-
 """
 
 BLACK = 0x000000
@@ -48,7 +48,6 @@ class LCD:
         Initialization of SPI for display (global)
         """
 
-        # spi = board.SPI() does not work
         # Create the display object
         self.display = ST7789(
             display_bus, rotation=270, width=240, height=135, rowstart=40, colstart=53
@@ -61,7 +60,8 @@ class LCD:
         self.splash = displayio.Group()
         self.display.show(self.splash)
 
-        self.color_bitmap = displayio.Bitmap(self.display.width, self.display.height, 2)
+        self.color_bitmap = displayio.Bitmap(
+            self.display.width, self.display.height, 2)
 
         color_pal = displayio.Palette(2)
         color_pal[0] = BLACK
@@ -71,7 +71,7 @@ class LCD:
             self.color_bitmap, pixel_shader=color_pal, x=0, y=0
         )
         self.splash.append(bg_sprite)
-        
+
         """
         Rainbow
         """
@@ -372,7 +372,8 @@ class LCD:
         elif ticks % (REFRESH_RATE / 5) == 0:
             self.rainbow_counter += 1
             for element in range(len(self.rainbow)):
-                self.rainbow[element].fill((element + self.rainbow_counter) % 7)
+                self.rainbow[element].fill(
+                    (element + self.rainbow_counter) % 7)
 
     def displayColorBlocks(self):
         # Draw a smaller inner rectangle

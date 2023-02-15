@@ -31,7 +31,6 @@ from led import *
 def main():
     print("Setting up the robot...")
     # Set the onboard LED to on
-    # Note: Onboard LED only works with our Pico H (Not W)
     led = DigitalInOut(board.LED)
     led.direction = Direction.OUTPUT
     led.value = True
@@ -165,12 +164,14 @@ def main():
         requests,
     )
 
-    # Main logic loop
+    ########################################
+    #           Main logic loop            #
+    ########################################
     print("Dancing Robot Started!")
     robot.reset()
     while True:
-        robot.refresh()
-        led.refresh()
+        robot.refresh()  # Increment the robot counter
+        led.refresh()  # Increment the led counter
         time.sleep(1 / REFRESH_RATE)
 
 

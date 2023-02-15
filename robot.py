@@ -28,7 +28,7 @@ class Robot:
         servo_left_lower_foot,
         servo_right_upper_foot,
         servo_left_upper_foot,
-        LCD: LCD,
+        lcd: LCD,
         requests,
     ):
         """Initialize the robot"""
@@ -37,21 +37,22 @@ class Robot:
         self.servo_right_upper_foot: servo.Servo = servo_right_upper_foot
         self.servo_left_upper_foot: servo.Servo = servo_left_upper_foot
 
-        # constants
+        # Constants
         self.SLOW_MOVE = int(REFRESH_RATE / 2)
         self.MEDIUM_MOVE = int(REFRESH_RATE / 4)
         self.FAST_MOVE = int(REFRESH_RATE / 8)
 
-        # tracking info
+        # Tracking info
         self.ticks = 0  # Timing counter
         self.counter = 0  # Counter for changing angles incrementally
         self.move_count = 1  # Move counter
         self.cycles = 0  # Cycle counter for each move
-        self.LCDObj = LCD
+        self.LCDObj: LCD = lcd  # LCD object instantiated in main.py
         self.last_max_tick = 0  # Last max tick for the move
+        # Flag to check if the move has changed (to then request the next move from the server)
         self.move_changed = False
 
-        # wireless control
+        # Wireless control
         self.wireless = Wireless(requests)
 
     def refresh(self):
@@ -92,17 +93,19 @@ class Robot:
             self.move_changed = True
 
         # Check for wireless signal to change move
-        # If receiving a valid move, perform that move once and then continue with the move count from there
-        # Sender local host has a constant value that is read by the pico wirelessly
+        # If receiving a valid move, perform that move once and then check again for
+        # the next move. If nothing new is received, it will repeat the move.
+        # Server has a move value that is read by the Pico wirelessly
         if self.move_changed == True:
-            move: int = self.wireless.request_move()
+            move: int = self.wireless.request_move()  # Get the move from the server
+            # Prevent the robot from repeatedly going through the entire sequence
             if move != -1:
                 self.ticks = 0
                 self.move_count = move
             self.move_changed = False
 
-        self.ticks += 1
-        self.counter += 1
+        self.ticks += 1  # Increment the timing counter
+        self.counter += 1  # Increment the angle counter
 
     def _swim(self, cycles: int):
         speed = self.MEDIUM_MOVE
@@ -134,6 +137,7 @@ class Robot:
             self.last_max_tick = self.ticks
             self.ticks = 0
 
+        # Go to the next move
         if self.cycles == cycles:
             self.reset()
             self.ticks = 0
@@ -177,6 +181,7 @@ class Robot:
             self.last_max_tick = self.ticks
             self.ticks = 0
 
+        # Go to the next move
         if self.cycles == cycles:
             self.reset()
             self.ticks = 0
@@ -302,6 +307,7 @@ class Robot:
             self.last_max_tick = self.ticks
             self.ticks = 0
 
+        # Go to the next move
         if self.cycles == cycles:
             self.reset()
             self.ticks = 0
@@ -410,6 +416,7 @@ class Robot:
             self.last_max_tick = self.ticks
             self.ticks = 0
 
+        # Go to the next move
         if self.cycles == cycles:
             self.reset()
             self.ticks = 0
@@ -464,6 +471,7 @@ class Robot:
             self.last_max_tick = self.ticks
             self.ticks = 0
 
+        # Go to the next move
         if self.cycles == cycles:
             self.reset()
             self.ticks = 0
@@ -501,14 +509,12 @@ class Robot:
                 90, 90, 160, 180, 160, 90, 160, 180, self.counter, speed
             )
         elif self.ticks == speed * 3:
-            self.LCDObj.led_top_mid = True
             self.counter = 0
         elif self.ticks < speed * 4:
             self._move_to_angles_incrementally(
                 160, 90, 160, 180, 160, 90, 90, 90, self.counter, speed
             )
         elif self.ticks == speed * 4:
-            self.LCDObj.led_top_left = True
             self.counter = 0
 
         # set right foot down
@@ -538,7 +544,6 @@ class Robot:
             )
         elif self.ticks == speed * 8:
             self.counter = 0
-            self.LCDObj.led_top_mid = True
 
         # move left foot forward
         elif self.ticks < speed * 9:
@@ -553,7 +558,6 @@ class Robot:
             )
         elif self.ticks == speed * 10:
             self.counter = 0
-            self.LCDObj.led_top_right = False
         elif self.ticks < speed * 11:
             self._move_to_angles_incrementally(
                 90, 10, 90, 90, 90, 90, 90, 90, self.counter, speed
@@ -564,6 +568,7 @@ class Robot:
             self.last_max_tick = self.ticks
             self.ticks = 0
 
+        # Go to the next move
         if self.cycles == cycles:
             self.reset()
             self.ticks = 0
@@ -583,17 +588,18 @@ class Robot:
         ending_lower_left: int,
         ending_lower_right: int,
         local_counter: int,
-        total_ticks: int = None,
+        total_ticks: int = -1,
     ):
-        """Moves from starting angles to ending angles incrementally
+        """
+        Moves from starting angles to ending angles incrementally
 
         @param local_counter: Counter to keep track of how many ticks have passed for this angle change
                               This is local to the function and should be reset to 0 when the function is called
                               This is not the same as self.ticks
-                              And this counter needs to be managed by the caller: start with 0, and with every tick, increment by 1
+                              This counter needs to be managed by the caller: start with 0, and with every tick, increment by 1
         @param total_ticks: How many ticks it should take to move from starting to ending angles, default is self.MEDIUM_MOVE
         """
-        if total_ticks is None:
+        if total_ticks is -1:
             total_ticks = self.MEDIUM_MOVE
         # Calculate the amount to increment each angle by
         increment_upper_left = (
@@ -620,8 +626,8 @@ class Robot:
             (increment_lower_right * local_counter)
 
         # Set the new angles
-        self._set_upper_angles(new_upper_left, new_upper_right)
-        self._set_lower_angles(new_lower_left, new_lower_right)
+        self._set_upper_angles(int(new_upper_left), int(new_upper_right))
+        self._set_lower_angles(int(new_lower_left), int(new_lower_right))
 
     # Servo range is from 5 to 170 for lower servos
     # Servos are individually tuned
@@ -714,6 +720,7 @@ class Robot:
             self.cycles += 1
             self.ticks = 0
 
+        # Go to the next move
         if self.cycles == cycles:
             self.reset()
             self.ticks = 0
@@ -741,6 +748,7 @@ class Robot:
             self.cycles += 1
             self.ticks = 0
 
+        # Go to the next move
         if self.cycles == cycles:
             self.reset()
             self.ticks = 0
