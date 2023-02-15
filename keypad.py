@@ -1,3 +1,6 @@
+# Group: 24
+# Names: Divy, Elio, Kelvin, Matthew
+
 import board
 import pwmio
 import digitalio
